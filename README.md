@@ -1,5 +1,7 @@
 # Erste Hilfe Prüfungstrainer · DGKP
 
+**➜ Trainer öffnen:** https://ryumatvv7.github.io/erstehilfe/
+
 Lern- und Übungsseite für die schriftliche Prüfung „Erste Hilfe und Notfallmanagement“ (1. Semester DGKP, WS 2026).
 
 ## Inhalt
@@ -9,6 +11,9 @@ Lern- und Übungsseite für die schriftliche Prüfung „Erste Hilfe und Notfall
 - **Prüfungsformate:** 20/20 · 30/30 · 30 Fragen/20 min · 20 Fragen/15 min – mit Note nach Notenschlüssel
 - **Abläufe:** 20 Schrittfolgen zum Ordnen (CPR, AED, Seitenlage, Fremdkörper, Druckverband …) + Checklisten für den Praxisteil
 - **Konspekt:** Zahlen, alle Themen, Merkhilfen, „Fallen“, Wörterbuch DE–EN
+
+## Rangliste
+Prüfungen mit Timer werden automatisch (mit Nickname) in die gemeinsame Rangliste eingetragen – sortiert nach Punkten, dann Zeit.
 
 ## Hinweise
 - Läuft im Browser, auch am Handy. Keine Anmeldung.
