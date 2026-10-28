@@ -194,6 +194,50 @@ h3{font-family:var(--f-display);font-weight:700;font-size:19px;margin:0;color:va
 .clist li{padding-left:4px;overflow-wrap:anywhere}
 .clist li::marker{color:var(--accent);font-family:var(--f-mono);font-size:.85em}
 .note{font-size:15.5px;color:var(--muted);border-left:3px solid var(--line-strong);padding:4px 10px}
+
+/* Konspekt (eingebettet) */
+.ksp{display:flex;flex-direction:column;gap:var(--gap);font-size:15.5px;line-height:1.5}
+.ksp section{border:1px solid var(--line);background:var(--panel);padding:16px;display:flex;flex-direction:column;gap:6px;min-width:0;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 70px)}
+.ksp h2{font-size:18px;margin:0 0 4px}
+.ksp h3{font-family:var(--f-display);color:var(--accent);font-size:16.5px;margin:10px 0 2px;text-transform:uppercase;letter-spacing:.06em}
+.ksp p{margin:0 0 4px}
+.ksp ul,.ksp ol{margin:0 0 6px;padding-left:22px}
+.ksp li{margin:0 0 3px;overflow-wrap:anywhere}
+.ksp li::marker{color:var(--accent)}
+.ksp b{color:var(--qink);font-weight:700}
+.ksp .ru{color:var(--muted);font-size:.86em;font-weight:400;font-style:normal}
+.ksp .ru::before{content:"("}.ksp .ru::after{content:")"}
+.ksp .rub{display:block;color:var(--muted);font-size:.9em;margin-top:3px}
+.ksp .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.ksp .cols>div{min-width:0}
+@media (max-width:760px){.ksp .cols{grid-template-columns:1fr}}
+.ksp .tw{overflow-x:auto;margin:4px 0 8px}
+.ksp table{border-collapse:collapse;width:100%;font-size:14px}
+.ksp th,.ksp td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.ksp th{background:var(--accent-soft);color:var(--accent);font-family:var(--f-display);font-weight:600;letter-spacing:.03em}
+.ksp td.num{white-space:nowrap;font-family:var(--f-mono);font-size:13px}
+.ksp .box{border:1px solid var(--line);padding:10px 12px;margin:4px 0 8px}
+.ksp .merk{border-color:var(--line-strong);background:var(--accent-soft)}
+.ksp .merk::before{content:"MERKE";display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;color:var(--accent);margin-bottom:4px}
+.ksp .falle{border-color:var(--bad-line);background:var(--bad-soft)}
+.ksp .falle::before{content:"FALLE";display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;color:var(--bad);margin-bottom:4px}
+.ksp .src,.ksp .small{font-size:13.5px;color:var(--muted)}
+.ksp .sub{font-size:15px}
+.ksp .toc{display:none}
+.ksp .cover>h3{display:none}
+.ksp .num-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ksp .num-grid div{border:1px solid var(--line);padding:8px 10px;background:rgba(0,0,0,.3)}
+.ksp .num-grid b{display:block;font-family:var(--f-mono);font-size:16px;color:var(--accent);text-shadow:0 0 8px var(--glow)}
+.ksp .num-grid span{font-size:13px;color:var(--ink)}
+.ksp .fallen li{margin-bottom:8px}
+.ksp .dict{columns:2 260px;column-gap:24px;font-size:14.5px}
+.ksp .dict p{break-inside:avoid;margin:0 0 5px}
+.ksp .dict .ru::before,.ksp .dict .ru::after{content:""}
+.ksp .dict .ru{font-size:.95em}
+.knav{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--hudbg);backdrop-filter:blur(6px);border:1px solid var(--line);padding:8px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin}
+.knav a{flex:none;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);text-decoration:none;border:1px solid var(--line);padding:5px 9px;white-space:nowrap}
+.knav a:hover{border-color:var(--line-strong)}
+.knav a:focus-visible{outline:2px solid var(--warn);outline-offset:1px}
 @media (max-width:600px){
   body{font-size:16.5px}
   .q{font-size:19px}
@@ -208,6 +252,479 @@ h3{font-family:var(--f-display);font-weight:700;font-size:19px;margin:0;color:va
 <body>
 
 <div class="hud" aria-live="off"><div class="hud-box sig"><span class="hud-l">made by</span><span class="tag">@ryumatvv7</span></div><div class="hud-box"><span class="hud-l">Zeit</span><span id="clock">--:--:--</span></div><div class="hud-box" id="timerBox" hidden><span class="hud-l">Rest</span><span id="timer">30:00</span></div></div>
+<template id="kspTpl">
+
+<!-- ============ COVER ============ -->
+<section class="cover" id="k1">
+  <div class="src">FH JOANNEUM Graz · DGKP 1. Semester · LV „Erste Hilfe und Notfallmanagement“ · schriftliche Prüfung 02.11.2026 (edu-Examiner)</div>
+  <p class="sub">Haupttext auf Deutsch (so wie in den Prüfungsfragen), <span class="ru">grau in Klammern – kurze Erklärung auf Englisch</span>. Zahlen nach den FH-Folien; Abweichungen zu anderen Quellen stehen bei „Fallen“.</p>
+  <div class="box"><b>Quellen:</b> Folien Lang/Guggi/Maikisch (55 S.), Dr. Eichinger/Dr. Auinger EH I–III (140 S.), Protokoll praktische Prüfung, Blatt „Herzdruckmassage“ (2020), GRC-Leitlinien 2025 kompakt (Kapitel BLS, PBLS, Systeme, Erste Hilfe).
+  <br><b>Notenschlüssel:</b> 1 = 100–90 % · 2 = 89–80 % · 3 = 79–70 % · 4 = 69–60 % · 5 &lt; 60 %.</div>
+  <h3>Inhalt</h3>
+  <ol class="toc">
+    <li>Die wichtigsten Zahlen</li><li>Grundlagen, Recht &amp; Notruf</li><li>Bewusstlosigkeit &amp; stabile Seitenlage</li><li>Reanimation Erwachsene &amp; AED</li><li>ABCDE &amp; Vitalwerte</li><li>Internistische Notfälle</li><li>Kinder &amp; Säuglinge</li><li>Trauma &amp; Blutungen</li><li>Checklisten (praktischer Teil)</li><li>Merkhilfen</li><li>Fallen</li><li>Wörterbuch DE–EN</li>
+  </ol>
+  <h2>1 · Die wichtigsten Zahlen</h2>
+  <div class="num-grid">
+    <div><b>100–120 /min</b><span>Herzdruckmassage – alle Altersgruppen</span></div>
+    <div><b>5–6 cm</b><span>Kompressionstiefe Erwachsene <i class="ru">depth</i></span></div>
+    <div><b>1/3 Brustkorb</b><span>Kompressionstiefe Kinder/Säuglinge</span></div>
+    <div><b>30 : 2</b><span>Erwachsene, Beginn mit 30 Kompressionen</span></div>
+    <div><b>5 + 15 : 2</b><span>Kinder/Säuglinge: 5 Beatmungen, dann 15:2</span></div>
+    <div><b>max. 10 s</b><span>Atemkontrolle; Unterbrechung für 2 Beatmungen</span></div>
+    <div><b>ca. 1 s</b><span>Dauer einer Beatmung</span></div>
+    <div><b>−10 % / min</b><span>Überlebenschance ohne Defibrillation</span></div>
+    <div><b>144 · 112</b><span>Rettung Österreich · Euro-Notruf</span></div>
+    <div><b>15 s · 3 min · 5 min</b><span>O₂-Mangel: bewusstlos · Teilzerstörung · Gehirntod</span></div>
+    <div><b>AF 12–15 /min</b><span>Atemfrequenz Erwachsene in Ruhe</span></div>
+    <div><b>SpO₂ 94–98 %</b><span>Sauerstoffsättigung normal</span></div>
+    <div><b>HF 60–100 /min</b><span>Herzfrequenz Erwachsene</span></div>
+    <div><b>RR ~120/80</b><span>Blutdruck; Schock: RR sys &lt; 90 mmHg</span></div>
+    <div><b>Rekap &lt; 2 s</b><span>Rekapillarisierungszeit, 5 s drücken</span></div>
+    <div><b>BZ 80–120 mg/dl</b><span>nüchtern; „normal &gt; 80“</span></div>
+    <div><b>GCS 3–15</b><span>&lt; 9 = bewusstlos; ≤ 8 schweres SHT</span></div>
+    <div><b>3–4 min · &gt; 10 min</b><span>Krampfanfall normal · Status epilepticus</span></div>
+    <div><b>150–500 mg</b><span>Aspirin kaubar bei Herzinfarkt</span></div>
+    <div><b>5 min</b><span>erneute Adrenalingabe bei Anaphylaxie</span></div>
+    <div><b>2 h</b><span>höchste Sterblichkeit beim Herzinfarkt</span></div>
+    <div><b>6 Mo – 6 J · 2–5 %</b><span>Fieberkrampf: Alter · Häufigkeit</span></div>
+    <div><b>&gt; 10 min · 1/3</b><span>komplizierter Fieberkrampf · Wiederholung</span></div>
+    <div><b>&lt; 25 kg</b><span>AED-Kindermodus (GRC 2025)</span></div>
+  </div>
+</section>
+
+<!-- ============ 2 GRUNDLAGEN ============ -->
+<section class="sec" id="k2">
+<h2>2 · Grundlagen, Recht &amp; Notruf</h2>
+<div class="cols"><div>
+<h3>Notfall &amp; Ziele</h3>
+<p><b>Notfallsituation</b> = unerwartetes Ereignis mit <b>unmittelbarer Gefahr für Leben oder Gesundheit</b>; durch Verletzungen, Vergiftungen <i class="ru">poisoning</i> oder akut auftretende Erkrankungen (Kuhnke 2025).</p>
+<p><b>Notfallmedizin</b>: Erkennung und notfallmäßige Versorgung von Patient*innen mit meist akutem, oft lebensbedrohlichem Problem, das sie selbst nicht überwinden können.</p>
+<p><b>Ziele der Ersten Hilfe</b> (GRC 2021): Leben erhalten · Leiden lindern <i class="ru">relieve suffering</i> · weitere Erkrankungen/Verletzungen verhindern · Genesung fördern <i class="ru">recovery</i>.</p>
+<h3>Basismaßnahmen des Ersthelfers</h3>
+<div class="tw"><table><tr><th>Lagerung <i class="ru">positioning</i></th><td>möglichst wenig Schmerzen, wohlfühlen, Folgeschäden vermeiden</td></tr>
+<tr><th>Frische Luft</th><td>beengende Kleidung öffnen <i class="ru">tight clothing</i>, langsam und ruhig atmen lassen</td></tr>
+<tr><th>Wärme</th><td>zudecken, vor Sonne schützen, nasse Kleidung entfernen</td></tr>
+<tr><th>Psychische Betreuung</th><td>für Ruhe sorgen, beruhigen, bleiben, sprechen</td></tr></table></div>
+<p class="small">Eichinger „BASIS“: <b>Hilferuf · psychische Betreuung · Wärmemanagement · Lagerung</b>.</p>
+<h3>Aufgaben / Nicht-Aufgaben</h3>
+<div class="tw"><table><tr><th>Aufgaben</th><th>NICHT-Aufgaben</th></tr>
+<tr><td>Notruf abgeben · vor Schäden bewahren · Vitalfunktionen überprüfen · lebensrettende Sofortmaßnahmen · beruhigen · bleiben, bis Hilfe eintrifft</td><td>Diagnosen stellen · über Zustand informieren · essen/trinken/rauchen geben · Medikamente (Ausnahmen) · <b>den Tod feststellen</b> <i class="ru">pronounce death</i></td></tr></table></div>
+<div class="box merk">„Das einzig Falsche ist, <b>nichts</b> zu tun!“ · „Im Zweifel – Drücken!“</div>
+<h3>Recht §</h3>
+<div class="tw"><table>
+<tr><td class="num">§ 4 (3) GuKG</td><td>allgemeine Berufspflichten <i class="ru">general professional duties</i></td></tr>
+<tr><td class="num">§ 14a GuKG</td><td>Kompetenzen bei Notfällen</td></tr>
+<tr><td class="num">§ 95 (1) StGB</td><td>Unterlassene Hilfeleistung <i class="ru">failure to render assistance – Criminal Code</i></td></tr>
+<tr><td class="num">§ 4 (2)(3) StVO</td><td>Verkehrsunfälle: alle Beteiligten helfen; nicht fähig → unverzüglich für fremde Hilfe sorgen; Abs. 3: auch Zeugen</td></tr>
+<tr><td class="num">§ 26 ASchG</td><td>Erste Hilfe am Arbeitsplatz <i class="ru">Occupational Safety Act</i></td></tr></table></div>
+<p class="small">Pflicht: jede*r hilft <b>entsprechend den eigenen Fähigkeiten, soweit zumutbar</b> <i class="ru">as far as reasonable</i>. Themen „DNR?“ und „Patientenverfügung“ <i class="ru">advance directive</i> werden auf der Folie nur genannt.</p>
+</div><div>
+<h3>Gefahrenzone &amp; Rettung</h3>
+<p>Absichern in dieser Reihenfolge: <b>1 Warnblinkanlage → 2 Warnschutzweste → 3 Warndreieck</b>, Abstand halten! <i class="ru">hazard lights → vest → triangle</i></p>
+<p>Gefahren laut Folie: Straßenverkehr, Strom + Wasser, ausgelaufene Zytostatika. <b>Eigenschutz geht vor.</b></p>
+<p>Retten: <b>Wegziehen</b> oder <b>Rautekgriff</b> <i class="ru">Rautek grip – pulling a person out of a danger zone/car</i>. Achtung <b>Airbag</b> im Fahrzeug. Helmabnahme mit 1 oder 2 Helfern (nur Bilder, ÖRK 2015).</p>
+<h3>Notruf</h3>
+<p><b>144</b> Rettung (Österreich) · <b>112</b> Euro-Notruf. Allein: <b>Lautsprecher</b> <i class="ru">speakerphone</i>.</p>
+<p><b>W-Fragen:</b> Wo? · Was? · Wie viele? · Wer ruft an (Name, Tel.)? · <b>Warten auf Rückfragen!</b> <i class="ru">don't hang up</i></p>
+<h3>Innerklinisch: SBAR</h3>
+<div class="tw"><table><tr><td><b>S</b> Situation</td><td>Was ist (jetzt) das Problem?</td></tr>
+<tr><td><b>B</b> Background</td><td>Vorgeschichte – warum ist Pat. hier?</td></tr>
+<tr><td><b>A</b> Assessment</td><td>Einschätzung <i class="ru">assessment</i> – was habe ich herausgefunden?</td></tr>
+<tr><td><b>R</b> Recommendation</td><td>Empfehlung – was brauche ich / was möchten Sie?</td></tr></table></div>
+<p><b>Innerklinischer Notfall</b> kündigt sich meist an <i class="ru">has warning signs</i> („Slippery Slope“) – oft <b>Hypoxie und/oder Hypotonie</b>, v. a. bei Demenz. Wichtig: Herzalarm auslösen, LSM, Krankengeschichte aufrufen, Notfallequipment/Notfallwagen (Crash Cart) holen. Interdisziplinär – man ist nicht allein.</p>
+<p><b>CRM</b> = Crew Resource Management <i class="ru">team resource management</i>. Notfälle sind komplex: Stress, Informationsflut, technisch herausfordernd, wechselnde Teams, dynamische Verläufe. Leitsätze z. B.: Hilfe <b>früh</b> anfordern · sicher kommunizieren · Double Check, nie etwas annehmen · 10-für-10-Prinzip. Human Factors: Kommunikation, Leadership, Situationsbewusstsein, Aufgabenmanagement, Entscheidungsfindung, Teamwork.</p>
+<h3>Rettungssystem (präklinisch)</h3>
+<p>First Responder (privat) · Rettungsautos: <b>RTW, KTW</b>, Graz „Jumbo“ · Notarztmittel: <b>NEF</b> (Notarzteinsatzfahrzeug), <b>RTH</b> (Rettungshubschrauber).</p>
+<h3>Überlebenskette &amp; -formel (GRC 2025)</h3>
+<ol><li>Rasch erkennen &amp; um Hilfe rufen <span class="ru">prevent cardiac arrest</span></li><li>Frühe CPR &amp; Defibrillation <span class="ru">save the brain, restart the heart</span></li><li>Erweiterte &amp; Postreanimationsmaßnahmen</li><li>Überleben &amp; Genesung <span class="ru">quality of life</span></li></ol>
+<p><b>Überlebensformel</b> = Wissenschaft × Ausbildung × Umsetzung. Leitstelle: standardisierte Protokolle, CPR-Anweisungen für <b>jeden</b> Anrufer (Standard: nur Kompressionen; geschult: 30:2), fragt nach AED.</p>
+<h3>Sauerstoff &amp; Gehirn</h3>
+<p><b>O₂-Flasche:</b> stark brandfördernd <i class="ru">supports combustion</i>, unter Druck, <b>schwerer als Luft</b> → reichert sich an; immer sichern, <b>nicht am Ventil anheben</b>, verschlossen halten, Abstand zu Heizkörpern; kein Rauchen.</p>
+<p><b>O₂-Mangel im Gehirn:</b> erste Störungen nach Sekunden · <b>Bewusstlosigkeit ~15 s</b> · Teilzerstörung ~3 min · <b>Gehirntod ~5 min</b>.</p>
+</div></div>
+</section>
+
+<!-- ============ 3 BEWUSSTLOSIGKEIT ============ -->
+<section class="sec" id="k3">
+<h2>3 · Bewusstlosigkeit &amp; stabile Seitenlage</h2>
+<div class="cols"><div>
+<div class="tw"><table><tr><th></th><th>Bewusstlosigkeit</th><th>Herz-Kreislauf-Stillstand</th></tr>
+<tr><td>Reaktion</td><td>keine</td><td>keine</td></tr>
+<tr><td>Atmung</td><td><b>vorhanden, normal</b></td><td><b>keine / nicht normal</b> (Schnappatmung!)</td></tr>
+<tr><td>Maßnahme</td><td>Notruf → <b>stabile Seitenlage</b> → regelmäßig wiederbeurteilen → bleiben</td><td>Notruf → <b>30 Kompressionen → 2 Beatmungen</b> → 30:2 → AED</td></tr></table></div>
+<p><b>Definition Bewusstlosigkeit:</b> reaktionslose Person <b>MIT</b> vorhandener Atmung, lebensbedrohlich durch gefährdeten Atemweg und/oder Grunderkrankung. GCS <b>&lt; 9</b>. Oft Symptom einer Kreislaufstörung, seltener Atemstörung; kausal selten behandelbar – Ausnahme <b>Hypoglykämie</b>.</p>
+<p><b>Gefahr:</b> fehlende Schutzreflexe <i class="ru">protective reflexes</i> – Husten-, Schluck-, Würgereflex → Atemwegsverschluss → Atemstillstand. Ersticken durch <b>Zunge, Erbrochenes, Blut</b> <i class="ru">tongue, vomit, blood</i>.</p>
+<h3>Vorgehen (Eichinger)</h3>
+<ol><li><b>Sicherheit</b></li><li><b>Ansprechbarkeit</b>: ansprechen, berühren, (an den Schultern) schütteln – „Ist alles in Ordnung?“</li><li><b>Atemweg</b> in Rückenlage öffnen: Kopf überstrecken <i class="ru">tilt head back</i>, Kinn anheben</li><li><b>Atmung prüfen</b>: Sehen, Hören, Fühlen – <b>max. 10 Sekunden</b></li><li><b>Rufen</b>: Umstehende, Angehörige; „Rufen Sie die Rettung 144 – bewusstlose Person!“</li></ol>
+<p class="small">Lang „Basismaßnahmen“: 1 Bewusstseinskontrolle · 2 Hilferuf · 3 Freimachen der Atemwege · 4 Atemkontrolle ca. 10 s · (5 Puls – nur Profis). „Stabile Seitenlage“: … 5 <b>reagiert nicht, aber atmet</b> → SSL.</p>
+</div><div>
+<h3>Esmarch-Handgriff</h3>
+<p>Unterkiefer mit <b>beiden Händen</b> nach vorne/oben schieben <i class="ru">jaw thrust</i>. <b>+</b> Kopf muss nicht bewegt werden (HWS-Verdacht). <b>−</b> man braucht beide Hände.</p>
+<h3>Maßnahmen „Atmung vorhanden → bewusstlos“</h3>
+<ul><li>beengende Kleidung öffnen</li><li><b>stabile Seitenlage</b> <i class="ru">recovery position</i></li><li>auf Hilfe warten, <b>regelmäßige Evaluierung</b> (Atemkontrolle)</li><li>nichts in den Mund geben</li></ul>
+<div class="box falle"><b>Schnappatmung</b> <i class="ru">agonal breathing</i> = kaum atmen, vereinzelte geräuschvolle Atemzüge in den ersten Minuten → <b>KEINE normale Atmung → CPR</b>. GRC 2025: keine Seitenlage bei agonaler Atmung oder Trauma. Zu Beginn eines Stillstands sind kurze Krämpfe möglich.</div>
+<h3>Patient wacht nach CPR auf</h3>
+<p>Stabile Seitenlage · regelmäßige Atemkontrolle · bleiben, bis Rettung eintrifft · im Zweifel – drücken!</p>
+<h3>Herz-Kreislauf</h3>
+<p>Herz = Pumpe. <b>Arterien</b>: O₂-reiches Blut <b>vom Herzen weg</b>; <b>Venen</b>: O₂-armes Blut <b>zum Herzen</b>. Herzstillstand: Pumpe fällt aus → keine O₂-Versorgung → Tod. Maßnahme: Pumpe von außen „ersetzen“ durch rhythmische Brustkorbkompressionen.</p>
+<h3>GRC 2025: 3 Schritte, um Leben zu retten</h3>
+<div class="tw"><table><tr><th>Prüfen</th><th>Rufen</th><th>Drücken &amp; AED</th></tr>
+<tr><td>Sicherheit · Bewusstsein</td><td>112 sofort, Lautsprecher, Atmung prüfen, Leitstelle hilft</td><td>CPR starten, AED sobald verfügbar, Anweisungen folgen</td></tr></table></div>
+</div></div>
+</section>
+
+<!-- ============ 4 REANIMATION ============ -->
+<section class="sec" id="k4">
+<h2>4 · Reanimation Erwachsene (BLS) &amp; AED</h2>
+<div class="cols"><div>
+<h3>Suffiziente Thoraxkompression <i class="ru">chest compressions</i></h3>
+<div class="tw"><table><tr><th>Kriterium</th><th>Grenzen</th></tr>
+<tr><td>Frequenz</td><td class="num"><b>100–120 /min</b></td></tr>
+<tr><td>Tiefe</td><td><b>5–6 cm</b> (mind. 5, max. 6)</td></tr>
+<tr><td>Entlastung</td><td>vollständig, Hände bleiben am Brustkorb</td></tr>
+<tr><td>Haltung</td><td>Arme durchgestreckt, Rücken gerade, Schultern senkrecht</td></tr>
+<tr><td>Unterlage</td><td><b>hart</b> <i class="ru">firm surface</i></td></tr>
+<tr><td>Druckpunkt</td><td>Mitte des Brustkorbs = <b>untere Hälfte des Brustbeins</b> (Sternum)</td></tr></table></div>
+<p>Finger verschränken <i class="ru">interlock fingers</i> → kein Druck auf die Rippen. Kleidung entfernen, wenn Brustbein nicht tastbar.</p>
+<h3>Ablauf</h3>
+<ol><li>keine Reaktion + keine normale Atmung</li><li>Notruf 112/144 (Lautsprecher), AED holen lassen</li><li><b>30 Thoraxkompressionen</b></li><li><b>2 Beatmungen</b></li><li>weiter <b>30:2</b></li><li>AED sobald verfügbar: einschalten, Anweisungen folgen</li></ol>
+<p><b>Bis wann?</b> bis professionelle Hilfe übernimmt/aufhören lässt · Person wacht auf, bewegt sich, öffnet die Augen <b>und</b> atmet normal · Helfer erschöpft.</p>
+<h3>Beatmung <i class="ru">rescue breathing</i></h3>
+<p>Schutzfolie, Kopf überstrecken, Kinn anheben, Nase mit Daumen + Zeigefinger der Stirnhand verschließen, ca. <b>1 s</b> einblasen, bis sich der Brustkorb hebt; Unterbrechung für 2 Beatmungen <b>max. 10 s</b>. Maske: <b>C-Griff</b>.</p>
+<p><b>Brustkorb hebt sich nicht?</b> 1 Mundhöhle inspizieren – ausräumen · 2 Überstreckung überprüfen · 3 nach <b>2 Versuchen</b> wieder Herzmassage (GRC: an Fremdkörper denken).</p>
+<p><b>Compression-Only</b>: Laien ohne Schulung oder keine Beatmung möglich (ethisch/hygienisch) → <b>trotzdem</b> durchgehend drücken, 100–120/min.</p>
+<h3>Reanimation im Bett (Eichinger)</h3>
+<p>Platz schaffen (Bett von der Wand, 360°-Zugang) · harte Unterlage: <b>CPR-Modus/CPR-Hebel</b>, <b>Reanimationsbrett</b> oder aus dem Bett heraus · <b>keine Reanimation im Sitzen</b>.</p>
+</div><div>
+<h3>AED <i class="ru">automated external defibrillator</i></h3>
+<ol><li>Einschalten</li><li>Elektroden auf die <b>nackte Brust</b> kleben</li><li>Analyse drücken</li><li>(wenn angezeigt) Schock auslösen</li><li>Patienten <b>nicht berühren</b></li><li>Gerät gibt Schock ab → <b>sofort weiter CPR</b></li></ol>
+<p>Kein Schock empfohlen → sofort weiter drücken. Mehrere Helfer: CPR läuft weiter, während Elektroden geklebt werden. Allein: Patient nur verlassen, wenn AED <b>innerhalb 1 Minute</b> geholt werden kann. Halbautomat: Helfer drückt Auslöseknopf; Vollautomat schockt selbst. Jeder darf einen AED benutzen.</p>
+<p><b>Nicht anwenden bei:</b> nassem Untergrund · leitendem Untergrund (Schienen) · explosiver Umgebung (Dämpfe).</p>
+<div class="tw"><table><tr><th>schockbar</th><th>nicht schockbar</th></tr>
+<tr><td>Kammerflimmern <i class="ru">ventricular fibrillation</i>, pulslose ventrikuläre Tachykardie</td><td>Asystolie, pulslose elektrische Aktivität (PEA)</td></tr></table></div>
+<div class="box merk"><b>Frühdefibrillation:</b> beste Erfolge bei Kammerflimmern; einzige sichere Therapie = Defibrillation; jede Minute ohne Defi <b>−10 %</b> Überlebenschance.</div>
+<h3>Sicherheit (GRC 2025)</h3>
+<p>Infektionsrisiko, Risiko eines versehentlichen Schocks und Verletzungsrisiko für Helfer: <b>gering</b>. Laien beginnen CPR ohne Angst vor Schäden; Notfallzeugen psychologisch unterstützen.</p>
+<h3>ALS-Algorithmus (Lang-Folie, Grundzüge)</h3>
+<p>CPR 30:2, Defibrillator/Monitor, Reanimationsteam → <b>Rhythmuskontrolle</b>:</p>
+<ul><li><b>schockbar</b> (VF/pVT): 1 Schock → <b>sofort 2 min CPR</b>; Adrenalin nach 3 Defibrillationen, dann alle 3–5 min; Amiodaron nach 3 Defibrillationen</li><li><b>nicht schockbar</b> (PEA/Asystolie): Adrenalin so bald wie möglich, <b>alle 3–5 min</b> → 2 min CPR</li><li><b>ROSC</b> <i class="ru">return of spontaneous circulation</i>: ABCDE, SpO₂ 94–98 %, SBP &gt; 100 mmHg, 12-Kanal-EKG</li></ul>
+<p><b>Reversible Ursachen</b>: 4 H – Hypoxie, Hypovolämie, Hypo-/Hyperkaliämie, Hypothermie; HITS – Herzbeuteltamponade, Intoxikation, Thrombose, Spannungspneumothorax.</p>
+</div></div>
+</section>
+
+<!-- ============ 5 ABCDE ============ -->
+<section class="sec" id="k5">
+<h2>5 · ABCDE &amp; Vitalwerte</h2>
+<p>Strukturierte Beurteilung einer Person, die krank, verletzt oder im Schock ist. <b>Vorher</b>: Sicherheit, Reaktion, lebensbedrohliche Blutungen (GRC 2025).</p>
+<div class="tw"><table><tr><th style="width:17%">Buchstabe</th><th>Beurteilung (Eichinger)</th><th>Normalbefund</th><th style="width:25%">Maßnahmen (Icare)</th></tr>
+<tr><td><b>A</b> Airway <i class="ru">airway</i></td><td>Atemweg frei (Blut, Erbrochenes, Zähne)? Spricht Pat.? HWS? Blick in den Mund. <b>CAVE</b>: kein gewaltsames Öffnen, keine Hilfsmittel</td><td>redet → Atemweg vermutlich frei</td><td>Mund ausräumen/absaugen, Kopf überstrecken, Heimlich</td></tr>
+<tr><td><b>B</b> Breathing</td><td>Atemarbeit, Atemmuster, SpO₂, Auskultation, Atemfrequenz</td><td>AF <b>12–15/min</b>; bds. gleich, tief; gleichmäßig; <b>SpO₂ 94–98 %</b>; vesikulär („Baumrascheln“), kein Giemen/Pfeifen; rosig, keine Zyanose <i class="ru">cyanosis, bluish skin</i></td><td>atemunterstützende Positionierung, O₂</td></tr>
+<tr><td><b>C</b> Circulation</td><td>Rekap-Zeit, RR, HF, Hautcolorit, Herzauskultation, Ultraschall</td><td>Rekap <b>&lt; 2 s</b>; RR <b>~120/80</b>; HF <b>60–100</b>; rosig, warm, trocken; keine Geräusche</td><td>Puls, RR, EKG</td></tr>
+<tr><td><b>D</b> Disability <i class="ru">neurology</i></td><td>reagiert adäquat? GCS, AVPU, orientiert? neurologisch auffällig?</td><td>GCS <b>15</b>; spricht klar, orientiert; bewegt alle 4 Extremitäten; BZ <b>80–120 mg/dl</b> nüchtern</td><td>BZ, Orientierung (Person, Situation, Zeit, Raum), Pupillen, GCS, BE-FAST</td></tr>
+<tr><td><b>E</b> Exposure / Environment</td><td>Kopf-Fuß-Untersuchung, Temperatur, Wärme (Decke, Jacke), ev. Schienung</td><td>–</td><td>Ganzkörperinspektion, Temperatur</td></tr></table></div>
+<div class="cols"><div>
+<h3>Pulsoxymetrie</h3>
+<p>Nicht-invasive Messung der O₂-Sättigung, meist auch Puls. Standard-Monitoring. Korrekt nur bei gut durchbluteten Fingern. <b>Fehler:</b> kalte Finger, Schock, Blutleere, <b>Kohlenmonoxid</b> <i class="ru">carbon monoxide</i>, <b>Nagellack</b>.</p>
+<p class="small">GRC 2025: O₂ nur wenn geschult; Ziel 94–98 %, bei COPD 88–92 %; &lt; 88 % → hoher Flow.</p>
+<h3>Rekapillarisierungszeit</h3>
+<p>Messpunkt: <b>Brustbein</b> (Finger fehleranfällig). 5 s drücken, loslassen, zählen. Normal &lt; 2 s.</p>
+<h3>Blutdruck</h3>
+<p>Druck im arteriellen System → wichtig für <b>Perfusion</b> <i class="ru">tissue perfusion</i>. <b>RR = Riva-Rocci</b>. Nicht-invasiv: palpatorisch/auditiv (Manschette + Stethoskop, Strömungsgeräusche: systolisch/diastolisch), oszillatorisch (automatisch, Pulswellen-Schwingungen). Invasiv: arterielle Leitung.</p>
+</div><div>
+<h3>Glasgow Coma Scale (GCS 3–15)</h3>
+<div class="tw"><table><tr><th>Augen (max. 4)</th><th>Verbal (max. 5)</th><th>Motorik (max. 6)</th></tr>
+<tr><td>4 spontan<br>3 auf Ansprache<br>2 auf Schmerzreiz<br>1 keine</td><td>5 orientiert<br>4 verwirrt<br>3 einzelne Worte<br>2 einzelne Laute<br>1 keine</td><td>6 spontan / befolgt<br>5 nach Aufforderung*<br>4 nach Schmerzreiz*<br>3 Beugung<br>2 Streckung<br>1 keine</td></tr></table></div>
+<p class="small">* Eichinger-Tabelle. Icare-Tabelle (Lang-Folie): 6 adäquat · 5 gezielte Abwehr · 4 unvollständige Abwehr · 3 Beugesynergien · 2 Strecksynergien · 1 keine.</p>
+<p><b>Schweregrad SHT</b> <i class="ru">traumatic brain injury</i>: 15–13 leicht · 12–9 mittel · <b>≤ 8 schwer</b>. Bewusstlosigkeit: GCS &lt; 9.</p>
+<p class="small">Beispiel: Augen auf Schmerz (2) + einzelne Laute (2) + Streckung (2) = <b>6</b>.</p>
+</div></div>
+</section>
+
+<!-- ============ 6 INTERNISTISCH ============ -->
+<section class="sec tight" id="k6">
+<h2>6 · Internistische Notfälle</h2>
+<div class="cols"><div>
+<h3>Atemnot (Dyspnoe) <i class="ru">shortness of breath</i></h3>
+<p>Das (subjektive) Symptom, nicht ausreichend Luft zu bekommen. Maßnahmen: O₂ (falls vorhanden) · <b>sitzen lassen/aufrecht</b> – „wie er sich selbst am besten fühlt“ · nach Asthma-Sprays fragen. Atemerleichternd: <b>Kutschersitz, Paschasitz, Stuhlstütze</b>, Abstützen.</p>
+<p class="small">Atemwegserkrankungen: entzündlich – Rhinitis (Schnupfen), Laryngitis (Kehlkopf), Pharyngitis (Rachen), <b>Epiglottitis (Kehldeckel)</b> <i class="ru">epiglottis</i>, Anaphylaxie; Verlegungen – Blut, Erbrochenes, Fremdkörper, Flüssigkeiten, Tumore; Verletzungen.</p>
+<h3>Fremdkörper bei Erwachsenen <i class="ru">foreign body</i></h3>
+<p>Husten! → <b>5× Rückenschläge</b> → <b>5× Heimlich</b> (Faust zwischen Nabel und Brustbeinende, nach innen-oben) → abwechselnd → <b>bewusstlos: CPR</b>. Danach immer Arzt (innere Verletzungen). Nicht blind im Mund suchen.</p>
+<h3>Anaphylaxie <i class="ru">anaphylaxis</i></h3>
+<p>Akuter Zustand nach Kontakt mit Allergen (Bienenstich, Nahrungsmittel, Medikamente wie Antibiotika) mit lebensbedrohlichen Symptomen.</p>
+<div class="tw"><table><tr><td>A</td><td>ev. geschwollen; <b>Stridor</b> = obere Atemwege</td></tr><tr><td>B</td><td>Atemnot, Giemen/Keuchen (untere Atemwege), SpO₂ ↓</td></tr><tr><td>C</td><td>Tachykardie, RR ↓, Brustschmerz, kalt + schweißig, Rekap ↑</td></tr><tr><td>D</td><td>ev. reduziertes Bewusstsein</td></tr><tr><td>E</td><td>Jucken, Nesselsucht <i class="ru">hives</i>, Übelkeit/Durchfall</td></tr></table></div>
+<p><b>Maßnahmen:</b> 1 erkennen (nachfragen) · 2 Agens entfernen (Stachel, Antibiotikum abdrehen) · 3 Notruf/Hilferuf · 4 bei <b>Atemnot aufsetzen</b>, bei <b>schwachem Puls Füße hoch</b> · 5 <b>Epi-Pen</b> (äußerer Oberschenkel, i. m.) · 6 bleiben. Erneut Adrenalin nach <b>5 min</b>. GRC-Dosis: 0,15 mg (1–5 J.) · 0,3 mg (6–12 J.) · 0,5 mg Erw.</p>
+<h3>Sepsis <i class="ru">sepsis</i></h3>
+<p>Lebensbedrohliche Reaktion des Körpers auf eine <b>Infektion</b>; überreagiert und schädigt eigenes Gewebe/Organe. A frei · B SpO₂ &lt; 94 %, schnelle Atmung · C HF &gt; 100, RR &lt; 90 sys, Rekap ↑, kalt/blass/schweißig · D verwirrt/agitiert · E <b>Fieber</b>. Therapie: sofort, Infektquelle finden, Intensivtherapie, Organersatz. „Daran denken!“</p>
+</div><div>
+<h3>Schock <i class="ru">shock</i></h3>
+<p>Lebensbedrohlich · Sauerstoff<b>unter</b>versorgung des Gewebes · Kreislaufversagen. <b>Immer: RR &lt; 90 mmHg systolisch.</b> HF meist &gt; 100, Rekap ↑, kalt/blass/schweißig, verwirrt.</p>
+<div class="tw"><table><tr><th>Form</th><th>Ursache (Beispiel)</th></tr>
+<tr><td>kardiogen</td><td>Herzschock – Herzinfarkt</td></tr>
+<tr><td>hypovoläm</td><td>Volumenmangel – starke Blutung</td></tr>
+<tr><td>obstruktiv</td><td>Verschluss – Pneumothorax</td></tr>
+<tr><td>distributiv</td><td>Verteilungsschock – Anaphylaxie</td></tr></table></div>
+<p>Maßnahmen: erkennen, Notruf · <b>ZEIT</b> · Lagerung (<b>Beine hoch</b>), psychische Betreuung, Wärme.</p>
+<h3>Herzinfarkt <i class="ru">heart attack</i></h3>
+<p>Verschluss eines Herzkranzgefäßes → Nekrose droht. Haupt-Todesursache in Industrieländern; höchste Sterblichkeit in den <b>ersten 2 h</b>; im Prinzip heilbar. Symptome: plötzlicher, vernichtender, <b>drückender/brennender</b> Schmerz mit Ausstrahlung in Schulter, <b>linken Arm</b>, Hals, Kinn, Oberbauch; <b>Todesangst</b>; blass/kalt/schweißig; RR zuerst hoch, im Schock niedrig.</p>
+<p>Schlüssel: früh erkennen · EKG · rasch ins Herzkatheterlabor (Stent) · Gerinnungsmedikamente: <b>150–500 mg Aspirin kaubar</b> (nicht bei Allergie). Maßnahmen: lagern, beruhigen, Notfallmanagement, Kleidung öffnen, Frischluft.</p>
+<h3>Schlaganfall („Schlagerl“) <i class="ru">stroke</i></h3>
+<p>Mangeldurchblutung des Gehirns: <b>ischämisch</b> (Gefäß verstopft) oder <b>hämorrhagisch</b> (Blutung). Problem: <b>schmerzlos</b>, oft erst nach Stunden bemerkt („Wake-up Stroke“); kann sich durch <b>TIAs</b> ankündigen. Ziel: frühe Reperfusion (z. B. Katheter).</p>
+<h3>Hypoglykämie <i class="ru">low blood sugar</i></h3>
+<p>„<b>Chamäleon</b>“ – imitiert alles (Krampf, Schlaganfall). Normal &gt; 80 mg/dl (bei Diabetikern evtl. schon zu wenig). HF typisch ↑, GCS ↓. ABCDE, Hilfe, BZ messen; <b>bei Bewusstsein</b> Zucker/Getränk/Gel; <b>bewusstlos: NICHTS in den Mund</b>.</p>
+<h3>Krampfanfall (Grand mal) <i class="ru">seizure</i></h3>
+<p>Generalisiert. Ursachen: Epilepsie, Schädelverletzung, Hirnerkrankung; Auslöser: Schlafmangel, Alkohol (zu viel/wenig), Stress, Reize, BZ zu hoch/niedrig. Ablauf: Aura → <b>tonisch</b> (Anspannung) → <b>klonisch</b> (Zuckungen) → Nachschlafphase; Zyanose, Zungenbiss, Harn/Stuhlabgang. Normal <b>3–4 min</b>; <b>&gt; 10 min</b> oder wiederholt = <b>Status epilepticus</b> (zerebrale Hypoxie, Hirnschaden). Maßnahmen: vor Verletzungen schützen, <b>keine Gewalt</b>, Eigenschutz, krampflösende Medikamente. Cave Hypoglykämie.</p>
+</div></div>
+</section>
+
+<!-- ============ 7 KINDER ============ -->
+<section class="sec" id="k7">
+<h2>7 · Kinder &amp; Säuglinge</h2>
+<div class="cols"><div>
+<div class="tw"><table><tr><th>Was sieht man?</th><th>Alter</th><th>Bezeichnung</th></tr>
+<tr><td>frisch geboren</td><td>0–24 (h)</td><td>Neugeborenes</td></tr>
+<tr><td>ohne Zähne · kann stehen/gehen</td><td>&lt; 6 Mo · 1 J</td><td>Säugling <i class="ru">infant</i></td></tr>
+<tr><td>offene Fontanelle · Windel · spricht</td><td>&lt; 2 J · &lt; 2 J · &gt; 2 J</td><td>Kleinkind</td></tr>
+<tr><td>Schultasche</td><td>&gt; 6 J</td><td>Kind</td></tr></table></div>
+<div class="tw"><table><tr><th>Kinder</th><th>Erwachsene</th></tr>
+<tr><td>höherer O₂-Bedarf, <b>keine O₂-Reserve</b></td><td>O₂-Reserve</td></tr>
+<tr><td><b>selten herzkrank</b></td><td>oft herzkrank</td></tr>
+<tr><td>elastischer Brustkorb, Bauchatmung, kleine Atemwege, schnellere AF/HF</td><td>verknöchert (Brüche), größere Atemwege, langsamere AF/HF</td></tr></table></div>
+<div class="box merk">Je <b>ruhiger</b> ein Kind im Notfall, desto <b>schwerer</b> krank.</div>
+<h3>Reanimation</h3>
+<div class="tw"><table><tr><th></th><th>Säugling (&lt; 1 J)</th><th>Kind (1 J – Pubertät)</th></tr>
+<tr><td>Kopf</td><td><b>Neutralstellung</b> (je kleiner, desto weniger Überstreckung)</td><td>überstrecken, Kinn anheben</td></tr>
+<tr><td>Beatmung</td><td>Mund über Mund <b>und</b> Nase</td><td>Mund-zu-Mund/Nase</td></tr>
+<tr><td>Start</td><td colspan="2"><b>5 Beatmungen</b>, Brustkorb muss sich heben</td></tr>
+<tr><td>Kompression</td><td>Zwei-Daumen-Technik</td><td>Ein-/Zweihandtechnik</td></tr>
+<tr><td>Druckpunkt / Tiefe</td><td colspan="2">untere Brustbeinhälfte · <b>1/3 Brustkorb</b> · 100–120/min</td></tr>
+<tr><td>Verhältnis</td><td colspan="2"><b>15:2</b> (mit PBLS-Training); ohne: 5 Beatmungen, dann 30:2</td></tr></table></div>
+<p class="small">GRC 2025: kein Schmerzreiz bei Kindern; Einzelhelfer ohne Handy: <b>1 min CPR</b>, dann Hilfe holen; AED bei Kindern jeden Alters, Kindermodus &lt; 25 kg (~8 J). Bewusstlos mit Atmung: SSL (nicht bei Trauma), Atmung ≥ 1×/min prüfen.</p>
+</div><div>
+<h3>Kindernotfälle</h3>
+<p>Atemnot (Pseudokrupp <i class="ru">croup</i>, Epiglottitis, Laryngitis, Asthma) · Bolus/Fremdkörper · Fieberkrampf.</p>
+<p><b>Zeichen der Atemnot:</b> Nasenflügeln <i class="ru">nasal flaring</i> · Einziehungen <i class="ru">retractions</i> (ober/unter Brustkorb, zw. Rippen) · hohe AF · Atemgeräusche (Keuchen, Bellen) · Haltung · „Kann das Kind noch sprechen oder schlucken?“</p>
+<p><b>Maßnahmen:</b> O₂ oder Frischluft · Stress reduzieren, <b>bei den Eltern belassen</b> · Luftfeuchtigkeit <b>erhöhen</b> (Bad: Dusche aufdrehen) · Inhalationen.</p>
+<div class="box falle">Schwere Atemnot: Kind <b>schreit nicht, spricht nicht, schluckt nicht</b> – braucht die Luft zum Atmen.</div>
+<h3>Fremdkörperaspiration <i class="ru">aspiration</i></h3>
+<p>Husten, Stridor, Atemnot – Anamnese! Vornübergebeugt husten lassen · Rückenschläge · (in Seitenlage) <b>sichtbaren</b> FK mit Finger entfernen · O₂.</p>
+<p><b>5 Schläge – 5 Heimlich – 5 Schläge …</b> Besser: effektiver Husten. Schlechter: bewusstlos → CPR (GRC: mit 5 Atemspenden).</p>
+<p><b>Säugling: Thoraxkompressionen statt Heimlich.</b> Rückenschläge: bäuchlings auf dem Unterarm, Kopf tiefer als Brustkorb. Nach Heimlich <b>immer ins Krankenhaus</b>.</p>
+<h3>Fieberkrampf <i class="ru">febrile seizure</i></h3>
+<p>Krampfanfall wegen hohen Fiebers; <b>2–5 %</b> aller Kinder; meist <b>6 Mo – 6 J</b>; tonisch-klonisch; Kind blau, verkrampft, röchelt, liegt „leblos“ („mein Kind stirbt“). Unkompliziert: hört nach wenigen Minuten auf; Nachschlaf, nach <b>15 min</b> erweckbar. <b>&gt; 10 min</b> = komplizierter Fieberkrampf. <b>1/3</b> erleidet einen weiteren.</p>
+<p>Maßnahmen: Eltern beruhigen · &gt; 10 min oder anhaltender Atemstillstand → beatmen · Krampf durchbrechen (krampflösende Zäpfchen) · ev. Fiebersenkung.</p>
+</div></div>
+</section>
+
+<!-- ============ 8 TRAUMA ============ -->
+<section class="sec" id="k8">
+<h2>8 · Trauma &amp; Blutungen</h2>
+<div class="cols"><div>
+<div class="tw"><table><tr><th></th><th>schwache Blutung</th><th>starke Blutung</th></tr>
+<tr><td>Aussehen</td><td>tropfend, rinnend</td><td>stark fließend, <b>spritzend</b></td></tr>
+<tr><td>Verlauf</td><td>langer Zeitraum, geringer Blutverlust</td><td>kurzer Zeitraum, <b>großer Blutverlust</b></td></tr>
+<tr><td>Gefahr</td><td><b>Infektion</b></td><td>Schock (hypovoläm)</td></tr>
+<tr><td>Versorgung</td><td><b>keimfreier Verband</b> <i class="ru">sterile dressing</i></td><td><b>Fingerdruck oder Druckverband</b></td></tr></table></div>
+<p>Immer <b>Eigenschutz → Handschuhe</b>. Einteilung zusätzlich: innere / äußere Blutung.</p>
+<h3>Fingerdruck</h3>
+<ol><li>hinsetzen/hinlegen</li><li>Handschuhe</li><li>Körperteil hochhalten</li><li>Finger <b>sofort</b> auf die Wunde pressen</li><li>Notruf</li><li>Druck <b>bis zum Eintreffen der Rettung</b></li></ol>
+<h3>Druckverband <i class="ru">pressure bandage</i></h3>
+<ol><li>hinsetzen/hinlegen</li><li>Handschuhe</li><li>saubere Wundauflage fest auf die Wunde drücken</li><li>Notruf</li><li>Wundauflage fixieren</li><li><b>Druckkörper</b> (Druckpolster) einbinden</li><li>hochlagern</li></ol>
+<p class="small">Aufbau: Wundauflage → Druckpolster → Binde (2–3 Bindengänge).</p>
+<h3>Starke Blutungen (Eichinger)</h3>
+<p>(steriler) Verband, auf die Wunde drücken → Druckverband („Wunde zubinden“) → <b>Tourniquet</b> <i class="ru">tourniquet</i> (selbst basteln, z. B. Gürtel) → unstillbar: <b>„load and go“</b> ins Krankenhaus. GRC: Tourniquet bei lebensbedrohlicher Extremitätenblutung, die mit Druck nicht stillbar ist; <b>Uhrzeit notieren</b>.</p>
+</div><div>
+<h3>Generell bei Trauma</h3>
+<ul><li>Blutungen <b>schnellstmöglich</b> stoppen (cABCDE)</li><li>Wärmeverlust vermeiden (Decke, Aludecke)</li><li>Atmung eng beobachten</li><li>Gegenstände/Fremdkörper (Messer, Äste) <b>unbedingt belassen</b></li><li>Helm abnehmen (wenn möglich)</li></ul>
+<div class="tw"><table><tr><th>xABC</th><th>Besonderheiten</th><th>Maßnahmen</th></tr>
+<tr><td>X Critical Bleeding</td><td>Blutungsquellen sichtbar/erahnbar</td><td>stoppen!</td></tr>
+<tr><td>A Airway</td><td>verlegt? Zähne/Blut/Abrisse</td><td>freimachen</td></tr>
+<tr><td>B Breathing</td><td>Brustkorb seitengleich? Verletzungszeichen? Hautknistern <i class="ru">subcutaneous crackling</i>?</td><td>Maßnahmen Atemnot</td></tr>
+<tr><td>C Circulation</td><td>Schockzeichen?</td><td>Schockmaßnahmen, Wärme, O₂</td></tr></table></div>
+<h3>Frakturen <i class="ru">fractures</i></h3>
+<p><b>MDS</b> prüfen: Durchblutung, Sensibilität, Motorik („warm? kalt? spüren Sie …?“). Wenn möglich <b>achsengerecht schienen</b> („so wie es normalerweise ausschaut“), abhängig vom Schmerz; im Zweifel so lagern, <b>wie der Patient es möchte</b>.</p>
+<h3>Verbrennungen <i class="ru">burns</i></h3>
+<p>Sofort <b>löschen</b> · ev. aus geschlossenen Räumen – Selbstschutz! · <b>je größer, desto weniger kühlen</b> (Unterkühlung) · vor Wärmeverlust schützen · ABCDE · Wunden max. mit <b>Alu-Verbänden</b> abdecken (sonst ankleben → Schmerzen).</p>
+<h3>GRC 2025 – Ergänzungen</h3>
+<p class="small"><b>HWS-Verdacht</b> (Sturz aus Höhe, Verkehrs-/Sportunfall): Bewegung minimieren, nie in eine Position zwingen. <b>Offene Brustwunde</b>: frei lassen, nicht abdecken. <b>Amputat</b>: in feuchten sterilen Verband, wasserdichter Beutel, in Eiswasser – nie direkt auf Eis, nicht gefrieren; beschriften; mit Patient ins selbe Krankenhaus. <b>Gehirnerschütterung</b>: Aktivität beenden, Arzt. <b>Ertrinken</b>: ungeschult nicht ins Wasser; 5 Atemspenden, dann CPR; AED nach Abtrocknen. <b>Hitzschlag</b>: erst kühlen, dann transportieren. <b>Unterkühlung</b>: trocken zudecken, Windschutz, nasse Kleidung aus, Bodenisolierung.</p>
+</div></div>
+</section>
+
+<!-- ============ 9 CHECKLISTEN ============ -->
+<section class="sec" id="k9">
+<h2>9 · Checklisten für den praktischen Teil</h2>
+<p class="small">Laut Protokoll müssen HDM und Beatmung bei Erwachsenen-, Kinder- und Säuglings-CPR je <b>≥ 96 %</b> über 2 Minuten erreichen (Feedback-Puppe). Weitere Skills: Helm-Abnahme, Notfallcheck, Defibrillation, Larynxtubus/-maske, Reanimation im Bett, I-Gel, Druckverband, Güdeltubus, Heimlich. <b>Für Helm-Abnahme, Larynxtubus/-maske, I-Gel und Güdeltubus enthalten die Unterlagen keine Schrittfolge</b> (nur Fotos bzw. gar nichts) – dort gilt, was im Praxistermin gezeigt wurde.</p>
+<div class="cols"><div>
+<div class="box check"><b>Notfallcheck / Basismaßnahmen</b><ol><li>☐ Sicherheit (Eigenschutz)</li><li>☐ Bewusstsein: ansprechen, berühren, an den Schultern schütteln</li><li>☐ Hilferuf (Umstehende, 144/112, Lautsprecher)</li><li>☐ Atemwege frei: Kopf überstrecken, Kinn anheben</li><li>☐ Atemkontrolle: sehen, hören, fühlen ≤ 10 s</li><li>☐ atmet normal → SSL, regelmäßig kontrollieren · nicht normal → CPR</li></ol></div>
+<div class="box check"><b>Erwachsenen-CPR</b><ol><li>☐ harte Unterlage, Oberkörper frei</li><li>☐ Handballen untere Brustbeinhälfte, Finger verschränkt</li><li>☐ Arme gestreckt, Schultern senkrecht</li><li>☐ 30× · 5–6 cm · 100–120/min · voll entlasten</li><li>☐ Kopf überstrecken, Nase zu, 2× ca. 1 s beatmen (Brustkorb hebt sich), Pause ≤ 10 s</li><li>☐ 30:2 ohne lange Unterbrechungen</li><li>☐ AED, sobald verfügbar</li></ol></div>
+<div class="box check"><b>Kinder-CPR (1 J – Pubertät)</b><ol><li>☐ Kopf überstrecken, Kinn anheben</li><li>☐ 5 Beatmungen (Mund-zu-Mund/Nase)</li><li>☐ untere Brustbeinhälfte, 1/3 Tiefe, Ein-/Zweihand, 100–120/min</li><li>☐ 15:2</li></ol></div>
+<div class="box check"><b>Säuglings-CPR (&lt; 1 J)</b><ol><li>☐ Neutralstellung, Kinn anheben</li><li>☐ 5 Beatmungen über Mund + Nase</li><li>☐ Zwei-Daumen-Technik, 1/3 Tiefe, 100–120/min</li><li>☐ 15:2</li></ol></div>
+</div><div>
+<div class="box check"><b>Defibrillation (AED)</b><ol><li>☐ einschalten</li><li>☐ Elektroden auf nackte Brust (CPR läuft weiter, wenn 2. Helfer)</li><li>☐ Analyse – niemand berührt</li><li>☐ Schock auslösen, wenn angezeigt – „Weg vom Patienten“</li><li>☐ sofort weiter CPR, Anweisungen folgen</li><li>☐ nicht auf nassem/leitendem Untergrund, nicht in explosiver Umgebung</li></ol></div>
+<div class="box check"><b>Reanimation im Bett</b><ol><li>☐ Herzalarm, Notfallwagen</li><li>☐ Bett von der Wand, 360°-Zugang</li><li>☐ CPR-Modus/-Hebel, Reanimationsbrett oder aus dem Bett</li><li>☐ keine CPR im Sitzen</li><li>☐ 30:2, Defi/Monitor anschließen</li></ol></div>
+<div class="box check"><b>Druckverband</b><ol><li>☐ hinsetzen/hinlegen</li><li>☐ Handschuhe</li><li>☐ Wundauflage fest aufdrücken</li><li>☐ Notruf</li><li>☐ Wundauflage fixieren</li><li>☐ Druckpolster einbinden (2–3 Bindengänge)</li><li>☐ hochlagern</li></ol></div>
+<div class="box check"><b>Heimlich-Manöver</b><ol><li>☐ zum Husten auffordern</li><li>☐ 5 Rückenschläge (vorgebeugt, zwischen Schulterblätter)</li><li>☐ hinter die Person, Faust zwischen Nabel und Brustbeinende, andere Hand darüber</li><li>☐ 5× kräftig nach innen-oben</li><li>☐ abwechselnd 5:5 · bewusstlos → CPR</li><li>☐ danach immer ärztliche Kontrolle · Säugling: Thoraxkompressionen statt Heimlich</li></ol></div>
+</div></div>
+</section>
+
+<!-- ============ 10 MERKHILFEN ============ -->
+<section class="sec" id="k10">
+<h2>10 · Merkhilfen <i class="ru">mnemonics</i></h2>
+<div class="cols"><div>
+<div class="box merk"><b>Die drei „10er“</b>: Atemkontrolle ≤ <b>10 s</b> · Beatmungspause ≤ <b>10 s</b> · ohne Defi <b>−10 %</b> pro Minute. (Und Status epilepticus / komplizierter Fieberkrampf: &gt; <b>10 min</b>.)</div>
+<div class="box merk"><b>„Hundert-zwanzig, fünf-sechs, dreißig-zwei“</b> – Erwachsene: 100–120/min, 5–6 cm, 30:2.<br><b>Kinder „5 + 15:2, ein Drittel“</b> – Kinder haben keinen Sauerstoff-Reservetank → <b>erst Luft</b> (5 Beatmungen).<br><span class="rub">Adults: compress first (heart). Children: breathe first (oxygen).</span></div>
+<div class="box merk"><b>GCS = 4-5-6</b> in der Reihenfolge <b>A-V-M</b> (Augen 4, Verbal 5, Motorik 6). Minimum 3, „unter 9 = bewusstlos“.<br><span class="rub">Eyes 4, verbal 5, motor 6 – “4-5-6 in A-V-M order”.</span></div>
+<div class="box merk"><b>Hirn-Uhr 15 – 3 – 5</b>: 15 Sekunden bewusstlos, 3 Minuten Teilschaden, 5 Minuten Gehirntod.</div>
+<div class="box merk"><b>Schockformen „K-H-O-D“</b>: Kardiogen = Herz · Hypovoläm = zu wenig Volumen (Blut) · Obstruktiv = Ob-Struktur verstopft (Pneumothorax) · Distributiv = Distribution / Verteilung (Allergie).<br><span class="rub">Distributive = “distribution” → anaphylaxis, NOT heart attack.</span></div>
+<div class="box merk"><b>Normwerte-Leiter</b>: AF <b>12–15</b> · HF <b>60–100</b> · RR <b>120/80</b> · SpO₂ <b>94–98</b> · Rekap <b>&lt; 2</b> · BZ <b>80–120</b> · GCS <b>15</b>.</div>
+</div><div>
+<div class="box merk"><b>Absichern wie beim Aussteigen</b>: Blinker an (im Auto) → Weste an (beim Aussteigen) → Dreieck aufstellen (draußen).</div>
+<div class="box merk"><b>Notruf „4 W + W“</b>: Wo – Was – Wie viele – Wer – <b>Warten</b>.</div>
+<div class="box merk"><b>AED „E-K-A-S“</b>: Einschalten – Kleben – Analyse – Schock (+ nicht berühren, sofort weiter drücken).</div>
+<div class="box merk"><b>Lagerung nach Leitsymptom</b>: Luftnot → <b>Oberkörper hoch</b> · Kreislaufnot (Schock, schwacher Puls) → <b>Beine hoch</b> · bewusstlos mit Atmung → <b>Seite</b> · Stillstand → <b>flach &amp; hart</b>.<br><span class="rub">Can't breathe → sit up; no blood pressure → legs up.</span></div>
+<div class="box merk"><b>Druckverband „A-N-F-P-H“</b>: Auflage drücken – Notruf – Fixieren – Polster – Hochlagern.</div>
+<div class="box merk"><b>Fieberkrampf „6-6 · 2-5 · 10 · ⅓ · 15“</b>: 6 Monate – 6 Jahre · 2–5 % · &gt; 10 min kompliziert · ⅓ Wiederholung · nach 15 min erweckbar.</div>
+<div class="box merk"><b>Recht</b>: § 95 StGB = Strafe fürs Wegschauen · § 4 StVO = Straße · § 14a GuKG = Pflege im Notfall · § 4 GuKG = Berufspflichten · § 26 ASchG = Arbeitsplatz.</div>
+<div class="box merk"><b>Arterie = „A“ wie „Abfahrt vom Herzen“</b> (O₂-reich), Vene = zurück zum Herzen (O₂-arm).</div>
+</div></div>
+</section>
+
+<!-- ============ 11 FALLEN ============ -->
+<section class="sec" id="k11">
+<h2>11 · Fallen – was man leicht verwechselt</h2>
+<div class="cols fallen"><div>
+<ol>
+<li><b>Verneinte Fragen</b>: „Welche Aussagen sind <b>FALSCH</b>?“, „Was gehört <b>NICHT</b> …?“, „<b>KEINE</b> Aufgabe …“ – zuerst das Signalwort markieren. <span class="ru">look for the WRONG ones</span></li>
+<li><b>Tiefe der HDM</b>: FH-Folien 2026 + GRC 2025 = <b>5–6 cm</b>, 100–120/min. Das alte Blatt „Herzdruckmassage“ (2020) sagt „4–5 cm, mind. 100“ – veraltet.</li>
+<li><b>Womit beginnen?</b> Erwachsene: <b>30 Kompressionen</b>. Kinder/Säuglinge: <b>5 Beatmungen</b>.</li>
+<li><b>15:2 vs 30:2 beim Kind</b>: 15:2 mit PBLS-Training; ungeschulte Laien: 5 Beatmungen, dann 30:2.</li>
+<li><b>Bewusstlos ≠ Stillstand</b>: bewusstlos = <b>mit</b> Atmung → SSL. Schnappatmung zählt <b>nicht</b> als Atmung → CPR.</li>
+<li><b>Atemkontrolle</b>: <b>maximal</b> 10 s (nicht „mindestens“).</li>
+<li><b>Säugling</b>: Kopf <b>Neutralstellung</b> (nicht überstrecken), Mund+Nase, <b>keine</b> Heimlich – Thoraxkompressionen.</li>
+<li><b>144 vs 112</b>: 144 = Rettung Österreich, 112 = Euro-Notruf. Beide richtig, je nach Frage.</li>
+<li><b>Arterien/Venen</b>: Arterien vom Herzen weg (O₂-reich), Venen zum Herzen.</li>
+<li><b>GCS-Motorik</b>: Eichinger und Icare benennen die Stufen unterschiedlich; gleich sind: max. 6, Beugung 3, Streckung 2, keine 1. Verbal max. <b>5</b>, nicht 6.</li>
+<li><b>E im ABCDE</b>: Exposure (Eichinger) = Environment (Icare) – beides meint Ganzkörperuntersuchung + Temperatur.</li>
+<li><b>Normaler BZ</b>: A2-Tabelle „80–120 mg/dl nüchtern“, A3 „normal &gt; 80“. GRC: Hypo behandeln unter 70 mg/dl.</li>
+<li><b>Schock</b>: Definition immer <b>RR &lt; 90 mmHg systolisch</b>; HF meist <b>erhöht</b>, Haut kalt/blass/schweißig.</li>
+<li><b>Distributiv</b> = Anaphylaxie; <b>kardiogen</b> = Herzinfarkt; <b>obstruktiv</b> = Pneumothorax.</li>
+</ol></div><div>
+<ol start="15">
+<li><b>Anaphylaxie-Lagerung</b>: Atemnot → aufsetzen; schwacher Puls → Füße hoch. Adrenalin in den <b>äußeren Oberschenkel</b>, nach <b>5 min</b> wiederholen.</li>
+<li><b>Stridor vs Giemen</b>: Stridor = obere Atemwege (Schwellung), Giemen/Keuchen = untere Atemwege.</li>
+<li><b>Verbrennung</b>: je größer, desto <b>weniger</b> kühlen; nur Alu-Verband.</li>
+<li><b>Druckverband</b>: erst Wundauflage fixieren, <b>dann</b> Druckpolster; zuletzt hochlagern.</li>
+<li><b>Schwache Blutung</b>: Problem = Infektion (nicht Blutverlust).</li>
+<li><b>Fremdkörper im Körper</b>: belassen. <b>Fremdkörper im Mund</b>: nur sichtbare entfernen, nicht blind wischen.</li>
+<li><b>CPR im Bett</b>: FH = harte Unterlage (CPR-Modus, Brett, aus dem Bett); GRC 2025 sagt „nicht auf den Boden legen, tiefer drücken“ – im Test gilt die FH-Folie. Nie im Sitzen.</li>
+<li><b>AED</b>: während Analyse und Schock <b>niemand berührt</b>; „kein Schock“ heißt <b>weiter drücken</b>, nicht aufhören.</li>
+<li><b>AED holen allein</b>: nur, wenn in &lt; 1 min erreichbar – sonst sofort CPR.</li>
+<li><b>Hypoglykämie bewusstlos</b>: <b>nichts</b> in den Mund.</li>
+<li><b>Krampfanfall</b>: nicht festhalten, nichts zwischen die Zähne („keine Gewalt“); normal 3–4 min, Status &gt; 10 min.</li>
+<li><b>Herzinfarkt</b>: Schmerz <b>links</b> (Arm, Schulter, Hals, Kinn, Oberbauch); Aspirin 150–500 mg <b>kaubar</b>, nicht bei Allergie. <b>Schlaganfall</b>: <b>schmerzlos</b>.</li>
+<li><b>Sauerstoff</b> ist <b>schwerer</b> als Luft; Flasche nicht am Ventil tragen.</li>
+<li><b>Innerklinischer Notfall</b> kommt meist <b>nicht</b> plötzlich – kündigt sich an (Hypoxie/Hypotonie).</li>
+<li><b>Nicht-Aufgaben</b>: Tod feststellen, Diagnose, Medikamente, essen/trinken/rauchen geben.</li>
+<li><b>Notfall-Reihenfolge Lang (Kuhnke)</b>: ansprechen → Atmung prüfen (SSL/CPR) → Notruf; GRC: Prüfen → Rufen → Drücken. Wichtig ist: bei Stillstand Notruf <b>und</b> sofort drücken.</li>
+</ol></div></div>
+</section>
+
+<!-- ============ 12 WÖRTERBUCH ============ -->
+<section class="sec" id="k12">
+<h2>12 · Wörterbuch DE – EN</h2>
+<div class="dict">
+<p><b>Ablauf</b> – <span class="ru">sequence of steps</span></p>
+<p><b>Absichern</b> – <span class="ru">secure the scene</span></p>
+<p><b>Ansprechbarkeit</b> – <span class="ru">responsiveness</span></p>
+<p><b>Atemkontrolle</b> – <span class="ru">breathing check</span></p>
+<p><b>Atemnot, Dyspnoe</b> – <span class="ru">shortness of breath</span></p>
+<p><b>Atemspende / Beatmung</b> – <span class="ru">rescue breathing</span></p>
+<p><b>Atemstillstand</b> – <span class="ru">respiratory arrest</span></p>
+<p><b>Atemweg freimachen</b> – <span class="ru">open the airway</span></p>
+<p><b>Auslöseknopf</b> – <span class="ru">shock button</span></p>
+<p><b>Bauchstoß / Oberbauchkompression</b> – <span class="ru">abdominal thrust (Heimlich)</span></p>
+<p><b>Beengende Kleidung</b> – <span class="ru">tight clothing</span></p>
+<p><b>Beugung / Streckung</b> – <span class="ru">flexion / extension</span></p>
+<p><b>Bewusstlosigkeit</b> – <span class="ru">unconsciousness</span></p>
+<p><b>Blutstillung</b> – <span class="ru">bleeding control</span></p>
+<p><b>Blutverlust</b> – <span class="ru">blood loss</span></p>
+<p><b>Blutzucker (BZ)</b> – <span class="ru">blood sugar</span></p>
+<p><b>Brustbein (Sternum)</b> – <span class="ru">breastbone</span></p>
+<p><b>Brustkorb / Thorax</b> – <span class="ru">chest</span></p>
+<p><b>Druckpunkt</b> – <span class="ru">compression point</span></p>
+<p><b>Druckverband / Druckpolster</b> – <span class="ru">pressure bandage / pressure pad</span></p>
+<p><b>Durchblutung</b> – <span class="ru">blood supply</span></p>
+<p><b>Eigenschutz</b> – <span class="ru">self-protection</span></p>
+<p><b>Einziehungen</b> – <span class="ru">retractions (intercostal etc.)</span></p>
+<p><b>Entlastung</b> – <span class="ru">full chest recoil</span></p>
+<p><b>Erbrochenes</b> – <span class="ru">vomit</span></p>
+<p><b>Ersticken</b> – <span class="ru">choking, suffocation</span></p>
+<p><b>Ersthelfer*in</b> – <span class="ru">first aider</span></p>
+<p><b>Fieberkrampf</b> – <span class="ru">febrile seizure</span></p>
+<p><b>Fingerdruck</b> – <span class="ru">direct finger pressure</span></p>
+<p><b>Fremdkörper(verlegung)</b> – <span class="ru">foreign body (obstruction)</span></p>
+<p><b>Gefahrenzone</b> – <span class="ru">danger zone</span></p>
+<p><b>Gehirnerschütterung</b> – <span class="ru">concussion</span></p>
+<p><b>Genesung</b> – <span class="ru">recovery</span></p>
+<p><b>Giemen / Keuchen</b> – <span class="ru">wheezing</span></p>
+<p><b>Halswirbelsäule (HWS)</b> – <span class="ru">cervical spine</span></p>
+<p><b>Handballen</b> – <span class="ru">heel of the hand</span></p>
+<p><b>Harn- / Stuhlabgang</b> – <span class="ru">incontinence of urine / stool</span></p>
+<p><b>Hautcolorit</b> – <span class="ru">skin colour</span></p>
+<p><b>Hautknistern</b> – <span class="ru">subcutaneous crackling</span></p>
+<p><b>Herzalarm</b> – <span class="ru">in-hospital cardiac arrest call</span></p>
+<p><b>Herzdruckmassage (HDM) / Thoraxkompression</b> – <span class="ru">chest compressions</span></p>
+<p><b>Herzinfarkt</b> – <span class="ru">heart attack</span></p>
+<p><b>Herzkranzgefäß</b> – <span class="ru">coronary artery</span></p>
+<p><b>Herz-Kreislauf-Stillstand</b> – <span class="ru">cardiac arrest</span></p>
+<p><b>Hilferuf</b> – <span class="ru">call for help</span></p>
+<p><b>hochlagern</b> – <span class="ru">elevate (a limb)</span></p>
+<p><b>Kammerflimmern</b> – <span class="ru">ventricular fibrillation</span></p>
+<p><b>keimfrei</b> – <span class="ru">sterile</span></p>
+<p><b>Kinn anheben</b> – <span class="ru">lift the chin</span></p>
+<p><b>Kopf überstrecken</b> – <span class="ru">tilt head back</span></p>
+<p><b>Krampfanfall</b> – <span class="ru">seizure</span></p>
+<p><b>Kreislaufversagen</b> – <span class="ru">circulatory failure</span></p>
+<p><b>Lagerung</b> – <span class="ru">positioning</span></p>
+<p><b>Lebensrettende Sofortmaßnahmen</b> – <span class="ru">immediate life-saving measures</span></p>
+<p><b>Leitstelle / Disponent*in</b> – <span class="ru">dispatch centre / dispatcher</span></p>
+<p><b>löschen</b> – <span class="ru">extinguish</span></p>
+<p><b>Nachschlafphase</b> – <span class="ru">post-seizure sleep</span></p>
+<p><b>Nasenflügeln</b> – <span class="ru">nasal flaring</span></p>
+<p><b>Notruf absetzen</b> – <span class="ru">make an emergency call</span></p>
+<p><b>Rautekgriff</b> – <span class="ru">Rautek grip</span></p>
+<p><b>Rekapillarisierungszeit</b> – <span class="ru">capillary refill time</span></p>
+<p><b>Rettungsdienst</b> – <span class="ru">ambulance service</span></p>
+<p><b>Rückenschläge</b> – <span class="ru">back blows</span></p>
+<p><b>Säugling / Kleinkind</b> – <span class="ru">infant / toddler (up to ~6 years)</span></p>
+<p><b>Sauerstoffsättigung</b> – <span class="ru">oxygen saturation</span></p>
+<p><b>Schienung</b> – <span class="ru">splinting</span></p>
+<p><b>Schlaganfall</b> – <span class="ru">stroke</span></p>
+<p><b>Schnappatmung</b> – <span class="ru">agonal breathing</span></p>
+<p><b>Schutzreflexe (Husten-, Schluck-, Würgereflex)</b> – <span class="ru">protective reflexes (cough, swallow, gag)</span></p>
+<p><b>Sehen, Hören, Fühlen</b> – <span class="ru">look, listen, feel</span></p>
+<p><b>Sensibilität / Motorik</b> – <span class="ru">sensation / motor function</span></p>
+<p><b>stabile Seitenlage (SSL)</b> – <span class="ru">recovery position</span></p>
+<p><b>Stridor</b> – <span class="ru">stridor, noisy inspiration</span></p>
+<p><b>Unfall / Unfallstelle</b> – <span class="ru">accident / accident scene</span></p>
+<p><b>Unterkühlung</b> – <span class="ru">hypothermia</span></p>
+<p><b>Unterlassene Hilfeleistung</b> – <span class="ru">failure to render assistance</span></p>
+<p><b>Unterzucker / Hypoglykämie</b> – <span class="ru">low blood sugar</span></p>
+<p><b>verabreichen</b> – <span class="ru">administer (a drug)</span></p>
+<p><b>verschlucken</b> – <span class="ru">choke on something</span></p>
+<p><b>Verbrennung</b> – <span class="ru">burn</span></p>
+<p><b>Verletzung</b> – <span class="ru">injury</span></p>
+<p><b>Vergiftung</b> – <span class="ru">poisoning</span></p>
+<p><b>Warndreieck / Warnschutzweste / Warnblinkanlage</b> – <span class="ru">warning triangle / hi-vis vest / hazard lights</span></p>
+<p><b>Wiederbelebung / Reanimation (CPR)</b> – <span class="ru">resuscitation (CPR)</span></p>
+<p><b>Wundauflage</b> – <span class="ru">wound dressing pad</span></p>
+<p><b>Zungenbiss</b> – <span class="ru">tongue bite</span></p>
+<p><b>zumutbar</b> – <span class="ru">reasonable, feasible</span></p>
+<p><b>Zyanose</b> – <span class="ru">cyanosis, bluish skin</span></p>
+</div>
+<p class="src" style="margin-top:3mm">Erstellt aus den Unterlagen der LV (Stand Oktober 2026). Altfragen lagen nicht vor.</p>
+</section>
+</template>
 <div class="layout" id="layout"><div class="wrap" id="app"></div><aside class="side" id="side" hidden aria-live="polite"></aside></div>
 
 <script>
@@ -713,7 +1230,7 @@ function clearRun(){store.del("eh_run")}
 const app=document.getElementById("app");
 const side=document.getElementById("side"), layout=document.getElementById("layout");
 const clockEl=document.getElementById("clock"), timerEl=document.getElementById("timer"), timerBox=document.getElementById("timerBox");
-let samplePromise=(window.claude&&window.claude.use)?window.claude.use("sample").catch(()=>null):Promise.resolve(null);
+let samplePromise=Promise.resolve(null);
 let aiCtl=null, aiOff=false;
 const pad=n=>String(n).padStart(2,"0");
 function tick(){
@@ -731,41 +1248,6 @@ function hideSide(){ if(aiCtl){aiCtl.abort();aiCtl=null} side.hidden=true; side.
 function mini(t){ return esc(t).split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>{
   l=l.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/^#+\s*/,"");
   return /^[-•*]\s+/.test(l)?`<div class="li">• ${l.replace(/^[-•*]\s+/,"")}</div>`:`<p>${l}</p>`;}).join(""); }
-function aiPrompt(q,picked){
-  const isRF=q.k==="rf";
-  const opts=q.o.map((o,i)=>`${i+1}. "${o}" — ${q.a.includes(i)?"НАДО ОТМЕТИТЬ":"НЕ надо отмечать"}; студент: ${picked.has(i)?"отметил":"не отметил"}`).join("\n");
-  return `Ты репетитор по первой помощи (Erste Hilfe und Notfallmanagement) для студента 1-го семестра DGKP (сестринское дело) в FH JOANNEUM Graz, Австрия. Родной язык студента русский, экзамен на немецком (онлайн-тест edu-Examiner). Источники курса: слайды FH (Lang/Guggi/Maikisch; Dr. Eichinger/Dr. Auinger) и GRC-Leitlinien 2025 kompakt; при расхождении верны слайды FH (например, глубина HDM 5–6 cm, 100–120/min, 30:2, у детей 5 вдохов + 15:2, Notruf 144 / 112). Студент ошибся в вопросе ниже. Объясни ошибку подробно и понятно, по-русски; немецкие термины оставляй на немецком и сразу поясняй.
-
-Тип вопроса: ${{sc:"Single Choice (один ответ)",mc:"Multiple Choice (несколько ответов, засчитывается только полностью верный набор)",rf:"richtig/falsch"}[q.k]}
-Тема: ${TOPICS[q.t]}
-Вопрос: ${q.q}
-Варианты (с правильным ключом и выбором студента):
-${opts}
-Краткое пояснение из ключа (это верно, не оспаривай): ${q.e}
-
-Структура ответа:
-1) **Где ошибка** — 1–2 предложения: что именно студент перепутал${/falsch|nicht|keine/i.test(q.q)&&!isRF?" (обрати внимание на отрицание в вопросе: FALSCH / NICHT / KEINE)":""}.
-2) **Разбор вариантов** — по каждому варианту строкой "- ": верно или неверно и почему, с конкретными фактами (цифры, порядок действий).
-3) **Ловушка** — какое слово или цифра в формулировке подменены.
-4) **Запомни** — короткая мнемоника или правило на будущее.
-Без вступления и без заключения. Ключевые слова выделяй **жирным**. До 250 слов.`;
-}
-async function runAI(q,picked){
-  const box=side.querySelector("#ai"); const btn=side.querySelector("#aiBtn");
-  if(!box)return;
-  const sample=await samplePromise;
-  if(!sample||aiOff){ side.querySelector("#aiSec").hidden=true; return; }
-  if(aiCtl)aiCtl.abort(); const ctl=aiCtl=new AbortController();
-  btn.hidden=true; box.innerHTML='<span class="wait">Analyse läuft …</span>';
-  try{
-    await sample(aiPrompt(q,picked),{signal:ctl.signal,onText:({text})=>{box.innerHTML=mini(text)}});
-  }catch(e){
-    if(e&&e.code==="cancelled")return;
-    if(e&&["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(e.code)){aiOff=true;side.querySelector("#aiSec").hidden=true;return;}
-    box.innerHTML=(e&&e.text?mini(e.text):"")+`<p class="stats">${e&&e.code==="rate_limited"?"Zu viele Anfragen – bitte kurz warten.":"Die Erklärung konnte nicht geladen werden."}</p>`;
-    btn.hidden=false; btn.textContent="Erneut versuchen";
-  }finally{ if(aiCtl===ctl)aiCtl=null; }
-}
 function showSide(q,picked){
   const li=q.o.map((o,i)=>{const must=q.a.includes(i),ch=picked.has(i),err=must!==ch;
     const st=(ch?"angekreuzt":"nicht angekreuzt")+" · "+(must?"richtig: ankreuzen":"richtig: nicht ankreuzen")+(err?" ✗":" ✓");
@@ -775,10 +1257,9 @@ function showSide(q,picked){
    ${neg?`<div class="key warnkey">Achtung: Die Frage ist <b>verneint</b> (FALSCH / NICHT / KEINE) – gesucht sind die unzutreffenden Aussagen.</div>`:""}
    <div class="sec"><span class="label">Deine Antworten</span><ul class="ana">${li}</ul></div>
    <div class="sec"><span class="label">Erklärung</span><div class="key">${esc(q.e)}</div></div>
-   <div class="sec" id="aiSec"><span class="label">Ausführlich (Claude, auf Russisch)</span><div class="ai" id="ai"><p class="stats">Nicht verstanden, warum? Claude erklärt jede Antwortmöglichkeit.</p></div><div class="row"><button class="btn" id="aiBtn">Ausführlich erklären</button></div></div>`;
+   `;
   side.hidden=false; layout.classList.add("has-side");
-  side.querySelector("#aiBtn").onclick=()=>runAI(q,picked);
-  samplePromise.then(s=>{ if(!s||aiOff){ const sec=side.querySelector("#aiSec"); if(sec)sec.hidden=true; } });
+  
 }
 const ECG=`<svg class="ecg" viewBox="0 0 600 40" aria-hidden="true"><path class="base" d="M0 24H600"/><path class="trace" pathLength="1000" d="M0 24H110l8-5 8 5h14l6 4 8-22 8 30 6-12h18l10-6 12 6H330l8-5 8 5h14l6 4 8-22 8 30 6-12h18l10-6 12 6H600"/></svg>`;
 const TYPE={sc:"Single Choice",mc:"Multiple Choice · mehrere richtig",rf:"Richtig oder falsch"};
@@ -839,6 +1320,11 @@ function home(){
     <p class="sub">Reanimation, Seitenlage, AED, Fremdkörper, Druckverband … Schritte antippen, bis die Reihenfolge stimmt.</p>
     <div class="row"><button class="btn" id="s-all">Schritte ordnen</button><button class="btn ghost" id="s-open" ${seqN<SEQ.length?"":"disabled"}>Nur ungelöste (${SEQ.length-seqN})</button><button class="btn ghost" id="s-list">Checklisten</button></div>
   </section>
+  <section class="panel">
+    <div class="qhead"><h2>Konspekt</h2><span class="stats">12 Kapitel · DE + EN</span></div>
+    <p class="sub">Der komplette Lernzettel: Zahlen, alle Themen, Checklisten, Merkhilfen, Fallen und Wörterbuch DE–EN.</p>
+    <div class="row"><button class="btn" id="k-open">Konspekt öffnen</button><button class="btn ghost" id="k-fallen">Direkt zu den Fallen</button></div>
+  </section>
   <p class="stats">Schon bearbeitet: ${seenN} / ${B.length} Fragen · offene Fehler gesamt: ${wrongSet.size}</p>`;
   const rs=app.querySelector("#resume");if(rs){rs.onclick=()=>{const r=loadRun();if(!r)return home();
     S.queue=r.items.map(([id,order,picked,done,ok])=>{const q=byId[id];return {q,order:(order&&order.length===q.o.length)?order:q.o.map((_,i)=>i),picked:(picked||[]).filter(x=>x<q.o.length),done:!!done,ok:!!ok}});
@@ -861,6 +1347,8 @@ function home(){
   app.querySelector("#s-all").onclick=()=>seqStart(shuffle(SEQ));
   app.querySelector("#s-open").onclick=()=>seqStart(shuffle(SEQ.filter(s=>!seqDone[s.id])));
   app.querySelector("#s-list").onclick=checklists;
+  app.querySelector("#k-open").onclick=()=>konspekt();
+  app.querySelector("#k-fallen").onclick=()=>konspekt("k11");
 }
 function start(list,mode,timed,exam){
   if(!list.length)return;
@@ -1035,6 +1523,19 @@ function checklists(){
   app.querySelector("#back").onclick=home;
   app.querySelector("#ord").onclick=()=>seqStart(shuffle(SEQ));
   window.scrollTo(0,0);
+}
+function konspekt(jump){
+  hideSide();
+  const names=["Zahlen","Grundlagen","Bewusstlos","Reanimation","ABCDE","Internistisch","Kinder","Trauma","Checklisten","Merkhilfen","Fallen","Wörterbuch"];
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><button class="btn ghost sm" id="back">← Übersicht</button><button class="btn sm" id="qz">Fragen üben</button></div>
+  <header class="head"><div class="status"><span class="dot"></span>Lernzettel · FH-Folien + GRC 2025</div><h1><span class="x">Erste Hilfe</span> Konspekt</h1></header>
+  <nav class="knav" aria-label="Kapitel">${names.map((n,i)=>`<a href="#k${i+1}" data-k="k${i+1}">${i+1} ${n}</a>`).join("")}</nav>
+  <div class="ksp" id="ksp"></div>`;
+  app.querySelector("#ksp").appendChild(document.getElementById("kspTpl").content.cloneNode(true));
+  app.querySelector("#back").onclick=home;
+  app.querySelector("#qz").onclick=()=>{const p=B.filter(q=>S.sel.has(q.t));start(shuffle(p),"Üben")};
+  app.querySelectorAll(".knav a").forEach(a=>a.onclick=e=>{e.preventDefault();const el=document.getElementById(a.dataset.k);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})});
+  if(jump){const el=document.getElementById(jump);if(el)requestAnimationFrame(()=>el.scrollIntoView({block:"start"}));}else window.scrollTo(0,0);
 }
 tick();
 home();
