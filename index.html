@@ -1220,7 +1220,7 @@ let wrongSet=new Set(store.get("eh_wrong",[]));
 let seen=store.get("eh_seen",{});
 let seqDone=store.get("eh_seq",{});
 const byId=Object.fromEntries(B.map(q=>[q.id,q]));
-function saveRun(){store.set("eh_run",{mode:S.mode,timed:S.timed,exam:S.exam,deadline:S.deadline,startedAt:S.startedAt,i:S.i,items:S.queue.map(x=>[x.q.id,x.order,x.picked,x.done?1:0,x.ok?1:0])})}
+function saveRun(){store.set("eh_run",{fmt:S.fmt,mode:S.mode,timed:S.timed,exam:S.exam,deadline:S.deadline,startedAt:S.startedAt,i:S.i,items:S.queue.map(x=>[x.q.id,x.order,x.picked,x.done?1:0,x.ok?1:0])})}
 function loadRun(){const r=store.get("eh_run",null);if(!r||!r.items)return null;
   const items=r.items.filter(([id])=>byId[id]);if(!items.length)return null;
   if(r.timed&&r.deadline&&Date.now()>r.deadline)return null;
@@ -1325,10 +1325,11 @@ function home(){
     <p class="sub">Der komplette Lernzettel: Zahlen, alle Themen, Checklisten, Merkhilfen, Fallen und Wörterbuch DE–EN.</p>
     <div class="row"><button class="btn" id="k-open">Konspekt öffnen</button><button class="btn ghost" id="k-fallen">Direkt zu den Fallen</button></div>
   </section>
+  ${SCORE_ON?`<section class="panel"><div class="qhead"><h2>Rangliste</h2><span class="stats">Prüfungen mit Timer</span></div><p class="sub">Wer hat die meisten Punkte in der kürzesten Zeit? Prüfungen mit Timer werden automatisch eingetragen.</p><div class="row"><button class="btn" id="rk-open">Rangliste öffnen</button></div></section>`:""}
   <p class="stats">Schon bearbeitet: ${seenN} / ${B.length} Fragen · offene Fehler gesamt: ${wrongSet.size}</p>`;
   const rs=app.querySelector("#resume");if(rs){rs.onclick=()=>{const r=loadRun();if(!r)return home();
     S.queue=r.items.map(([id,order,picked,done,ok])=>{const q=byId[id];return {q,order:(order&&order.length===q.o.length)?order:q.o.map((_,i)=>i),picked:(picked||[]).filter(x=>x<q.o.length),done:!!done,ok:!!ok}});
-    S.mode=r.mode;S.timed=!!r.timed;S.exam=!!r.exam;S.deadline=r.deadline||0;S.startedAt=r.startedAt||Date.now();S.timeout=false;S.confirm=false;
+    S.mode=r.mode;S.fmt=r.fmt||"";S.timed=!!r.timed;S.exam=!!r.exam;S.deadline=r.deadline||0;S.startedAt=r.startedAt||Date.now();S.timeout=false;S.confirm=false;
     S.i=Math.min(r.i||0,S.queue.length-1); if(!S.timed){const f=S.queue.findIndex(x=>!x.done); if(S.queue[S.i].done&&f>=0)S.i=f;}
     tick();question()};
     app.querySelector("#drop").onclick=()=>{clearRun();home()};}
@@ -1348,12 +1349,13 @@ function home(){
   app.querySelector("#s-open").onclick=()=>seqStart(shuffle(SEQ.filter(s=>!seqDone[s.id])));
   app.querySelector("#s-list").onclick=checklists;
   app.querySelector("#k-open").onclick=()=>konspekt();
+  const rko=app.querySelector("#rk-open"); if(rko)rko.onclick=()=>ranking();
   app.querySelector("#k-fallen").onclick=()=>konspekt("k11");
 }
 function start(list,mode,timed,exam){
   if(!list.length)return;
   S.queue=list.map(q=>({q,order:q.k==="rf"?q.o.map((_,i)=>i):shuffle(q.o.map((_,i)=>i)),picked:[],done:false,ok:false}));
-  S.i=0;S.mode=mode;S.timed=!!timed;S.exam=!!exam;S.startedAt=Date.now();S.deadline=timed?Date.now()+cfg.m*60000:0;S.timeout=false;S.grid=false;S.confirm=false;
+  S.i=0;S.mode=mode;S.timed=!!timed;S.exam=!!exam;S.startedAt=Date.now();S.deadline=timed?Date.now()+cfg.m*60000:0;S.fmt=timed?`${cfg.n}/${cfg.m}`:"";S.timeout=false;S.grid=false;S.confirm=false;
   saveRun();tick();question();window.scrollTo(0,0)}
 function go(k){ if(k<0||k>=S.queue.length)return; S.i=k; S.confirm=false; saveRun(); question(); window.scrollTo(0,0); }
 function cellClass(it,k){
@@ -1471,11 +1473,59 @@ function result(){
     ${timed?`<div class="stats">Benötigte Zeit: ${pad(Math.floor(used/60000))}:${pad(Math.floor(used%60000/1000))} von ${limit}:00</div>`:""}
     ${skipped?`<div class="stats">${skipped} Fragen nicht beantwortet (zählen als falsch)</div>`:""}
     <div class="stats">${Object.entries(byT).map(([t,o])=>`${esc(TOPICS[t])}: ${o.r}/${o.n}`).join(" · ")}</div>
+    ${SCORE_ON&&timed&&S.fmt?(skipped<=n/2?`<div id="rank" class="key">Rangliste …</div>`:`<div class="stats">Nicht in die Rangliste eingetragen: mehr als die Hälfte unbeantwortet.</div>`):""}
     <div class="row"><button class="btn" id="again">Fehler dieser Runde wiederholen (${wrong.length})</button><button class="btn ghost" id="home">Zu den Themen</button></div>
   </section>
   ${wrong.length?`<section class="panel"><h2>Falsch oder offen</h2><ul class="wrongs">${wrong.map(x=>`<li><div>${esc(x.q.q)}</div>${!x.done?`<div class="a mine">nicht beantwortet</div>`:`<div class="a mine">Deine Antwort: ${x.picked.map(i=>esc(x.q.o[i])).join(" · ")}</div>`}<div class="a">Richtig: ${x.q.a.map(i=>esc(x.q.o[i])).join(" · ")}</div><div class="a ex">${esc(x.q.e)}</div></li>`).join("")}</ul></section>`:""}`;
   const again=app.querySelector("#again");again.disabled=!wrong.length;again.onclick=()=>start(shuffle(wrong.map(x=>x.q)),"Fehler");
   app.querySelector("#home").onclick=home;window.scrollTo(0,0);
+  if(SCORE_ON&&timed&&S.fmt&&skipped<=n/2) scoreSubmit({fmt:S.fmt,correct:r,total:n,seconds:Math.max(10,Math.min(1800,Math.round(used/1000))),grade:g});
+}
+/* ---------- Rangliste ---------- */
+const SCORE_ON=true;
+const SB_URL="https://scfcutwfcjjiilmlshbq.supabase.co/rest/v1/scores", SB_KEY="sb_publishable_nmeil23qHULj6WX51WWOAw_N6BX7-jb";
+const SBH={apikey:SB_KEY,"Content-Type":"application/json"};
+const FMTS=["20/15","30/20","20/20","30/30"];
+function nickOk(s){return typeof s==="string"&&s.trim().length>=2&&s.trim().length<=20}
+async function sbTop(fmt,limit){const r=await fetch(`${SB_URL}?select=nick,correct,total,seconds,grade,created_at&fmt=eq.${encodeURIComponent(fmt)}&order=correct.desc,seconds.asc,created_at.asc&limit=${limit}`,{headers:SBH});if(!r.ok)throw new Error(r.status);return r.json();}
+async function sbSend(row){const r=await fetch(SB_URL,{method:"POST",headers:{...SBH,Prefer:"return=minimal"},body:JSON.stringify(row)});if(!r.ok)throw new Error(r.status);}
+function scoreSubmit(res){
+  const box=document.getElementById("rank"); if(!box)return;
+  const nick=store.get("eh_nick","");
+  if(!nickOk(nick)){
+    box.innerHTML=`<b style="color:var(--accent)">Rangliste:</b> Einmal einen Nickname wählen – danach werden Prüfungen mit Timer automatisch eingetragen.<div class="row" style="margin-top:8px"><input id="nickIn" maxlength="20" placeholder="Nickname" style="font:inherit;background:rgba(0,0,0,.4);color:var(--qink);border:1px solid var(--line-strong);padding:8px 10px;min-width:0;flex:1 1 160px"><button class="btn sm" id="nickGo">Eintragen</button></div>`;
+    const go=()=>{const v=document.getElementById("nickIn").value.trim(); if(!nickOk(v)){box.querySelector("#nickIn").style.borderColor="var(--bad)";return;} store.set("eh_nick",v); scoreSubmit(res);};
+    box.querySelector("#nickGo").onclick=go; box.querySelector("#nickIn").onkeydown=e=>{if(e.key==="Enter")go()};
+    return;
+  }
+  box.textContent="Wird in die Rangliste eingetragen …";
+  sbSend({nick:nick.trim(),...res}).then(()=>sbTop(res.fmt,1000)).then(rows=>{
+    const place=rows.filter(x=>x.correct>res.correct||(x.correct===res.correct&&x.seconds<res.seconds)).length+1;
+    box.innerHTML=`Eingetragen als <b style="color:var(--accent)">${esc(nick)}</b> · Platz <b style="color:var(--qink)">${place}</b> von ${rows.length} (${esc(res.fmt)} min) · <a href="#" id="rkGo" style="color:var(--accent)">Rangliste ansehen</a>`;
+    box.querySelector("#rkGo").onclick=e=>{e.preventDefault();ranking(res.fmt)};
+  }).catch(()=>{box.textContent="Rangliste gerade nicht erreichbar – Ergebnis wurde nicht eingetragen.";});
+}
+function ranking(fmt){
+  hideSide(); fmt=fmt||cfg.n+"/"+cfg.m; if(!FMTS.includes(fmt))fmt="20/15";
+  const nick=store.get("eh_nick","");
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><button class="btn ghost sm" id="back">← Übersicht</button><span class="stats">Nur Prüfungen mit Timer</span></div>
+  <header class="head"><div class="status"><span class="dot"></span>Live · alle Teilnehmer*innen</div><h1><span class="x">Rang</span>liste</h1>${ECG}</header>
+  <div class="cfg">${FMTS.map(f=>{const [n,m]=f.split("/");return `<button class="chip" data-f="${f}" aria-pressed="${f===fmt}">${n} Fragen · ${m} min</button>`}).join("")}</div>
+  <section class="panel"><div id="rk" class="stats">Lade …</div></section>
+  <section class="panel"><div class="qhead"><h2>Dein Nickname</h2></div>
+   <div class="row"><input id="nickEd" maxlength="20" value="${esc(nick)}" placeholder="Nickname" style="font:inherit;background:rgba(0,0,0,.4);color:var(--qink);border:1px solid var(--line-strong);padding:8px 10px;min-width:0;flex:1 1 160px"><button class="btn sm" id="nickSave">Speichern</button></div>
+   <p class="stats">Gilt für künftige Einträge. Sortierung: Punkte, dann Zeit.</p></section>`;
+  app.querySelector("#back").onclick=home;
+  app.querySelectorAll(".cfg .chip").forEach(b=>b.onclick=()=>ranking(b.dataset.f));
+  app.querySelector("#nickSave").onclick=()=>{const v=app.querySelector("#nickEd").value.trim();if(nickOk(v)){store.set("eh_nick",v);ranking(fmt)}else app.querySelector("#nickEd").style.borderColor="var(--bad)"};
+  sbTop(fmt,20).then(rows=>{
+    const el=app.querySelector("#rk"); if(!el)return;
+    if(!rows.length){el.textContent="Noch keine Einträge in diesem Format – sei die/der Erste!";return;}
+    el.outerHTML=`<div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;font-size:15px">
+      <tr style="font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)"><td style="padding:6px">#</td><td style="padding:6px">Nick</td><td style="padding:6px">Punkte</td><td style="padding:6px">Note</td><td style="padding:6px">Zeit</td></tr>
+      ${rows.map((x,i)=>`<tr style="border-top:1px solid var(--line);${x.nick===nick?"background:var(--accent-soft)":""}"><td style="padding:7px 6px;font-family:var(--f-mono);color:${i<3?"var(--accent)":"var(--muted)"}">${i+1}</td><td style="padding:7px 6px;color:var(--qink);overflow-wrap:anywhere">${esc(x.nick)}</td><td style="padding:7px 6px;font-family:var(--f-mono)">${x.correct}/${x.total}</td><td style="padding:7px 6px;font-family:var(--f-mono)">${x.grade}</td><td style="padding:7px 6px;font-family:var(--f-mono)">${pad(Math.floor(x.seconds/60))}:${pad(x.seconds%60)}</td></tr>`).join("")}</table></div>`;
+  }).catch(()=>{const el=app.querySelector("#rk");if(el)el.textContent="Rangliste gerade nicht erreichbar.";});
+  window.scrollTo(0,0);
 }
 /* ---------- Abläufe: Schritte ordnen ---------- */
 const SQ={list:[],i:0,placed:[],pool:[],checked:false,ok:false,score:0};
