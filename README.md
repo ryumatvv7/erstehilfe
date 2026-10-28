@@ -1,8 +1,8 @@
-# Erste Hilfe Prüfungstrainer · DGKP
+# Erste Hilfe Prüfungstrainer
 
 **➜ Trainer öffnen:** https://ryumatvv7.github.io/erstehilfe/
 
-Lern- und Übungsseite für die schriftliche Prüfung „Erste Hilfe und Notfallmanagement“ (1. Semester DGKP, WS 2026).
+Lern- und Übungsseite für Erste Hilfe & Notfallmanagement (Pflege).
 
 ## Inhalt
 - **377 Fragen** im Prüfungsformat: Single Choice, Multiple Choice (nur komplett richtig zählt), richtig/falsch
@@ -18,6 +18,6 @@ Prüfungen mit Timer werden automatisch (mit Nickname) in die gemeinsame Ranglis
 ## Hinweise
 - Läuft im Browser, auch am Handy. Keine Anmeldung.
 - Der Fortschritt wird nur in deinem Browser gespeichert (nicht geteilt, nicht übertragbar zwischen Geräten).
-- Inoffizielles Lernmaterial von Studierenden – ohne Gewähr. Fehler gefunden? → Issue erstellen oder Bescheid geben.
+- Inoffizielles Lernmaterial – ohne Gewähr. Fehler gefunden? → Issue erstellen oder Bescheid geben.
 
 made by @ryumatvv7
