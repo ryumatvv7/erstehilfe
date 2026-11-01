@@ -183,6 +183,15 @@ h3{font-family:var(--f-display);font-weight:700;font-size:19px;margin:0;color:va
 .cfg{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 /* Abläufe */
 .steps{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.mt-pool,.mt-bin .drop{display:flex;flex-wrap:wrap;gap:8px;min-height:48px;padding:8px;border:1px dashed var(--line);background:rgba(0,0,0,.25)}
+.mt-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0}
+.mt-bin{min-width:0}.mt-bin h4{margin:0 0 6px;overflow-wrap:anywhere;font-family:var(--f-mono);font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:.04em}
+.mt-bin.over .drop,.mt-pool.over{border-color:var(--accent);background:rgba(0,240,255,.08)}
+.chipd{font:inherit;font-size:15px;padding:8px 11px;border:1px solid var(--line);background:rgba(0,0,0,.5);color:var(--ink);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;text-align:left}
+.chipd.sel{outline:2px solid var(--accent)}
+.chipd.right{border-color:#3ddc84;color:#3ddc84}.chipd.wrong{border-color:#ff4d6d;color:#ff4d6d}
+.chipd.ghost{position:fixed;pointer-events:none;z-index:999;opacity:.9;box-shadow:0 6px 20px rgba(0,0,0,.6)}
+.chipd .fix{display:block;font-size:12px;opacity:.85}
 .step{font:inherit;font-size:16.5px;text-align:left;display:flex;gap:12px;align-items:flex-start;width:100%;border:1px solid var(--line);padding:10px 12px;background:rgba(0,0,0,.35);color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent;overflow-wrap:anywhere}
 .step .no{font-family:var(--f-mono);font-size:12.5px;color:var(--accent);min-width:22px;padding-top:3px}
 .step.placed{border-color:var(--line-strong);background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
@@ -225,7 +234,7 @@ h3{font-family:var(--f-display);font-weight:700;font-size:19px;margin:0;color:va
 .ksp .sub{font-size:15px}
 .ksp .toc{display:none}
 .ksp .cover>h3{display:none}
-.ksp .num-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ksp .num-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
 .ksp .num-grid div{border:1px solid var(--line);padding:8px 10px;background:rgba(0,0,0,.3)}
 .ksp .num-grid b{display:block;font-family:var(--f-mono);font-size:16px;color:var(--accent);text-shadow:0 0 8px var(--glow)}
 .ksp .num-grid span{font-size:13px;color:var(--ink)}
@@ -1209,6 +1218,40 @@ const CHECK=[
  {title:"Praktisches Training",src:"Erste-Hilfe-Standard",items:["Erwachsenen-, Kinder- und Säuglings-CPR an der Feedback-Puppe üben: Kompressionen und Beatmung über 2 Minuten in hoher Qualität","Weitere typische Skills: Helm-Abnahme, Notfallcheck, Defibrillation, Larynxtubus/Larynxmaske, Reanimation im Bett, I-Gel, Druckverband, Güdeltubus, Heimlich-Manöver","Atemwegshilfen (Larynxtubus, I-Gel, Güdeltubus) und Helm-Abnahme: Technik aus dem eigenen Praxistraining"]}
 ];
 
+/* Zuordnen (Drag & Drop): items = [Text, Index der richtigen Kategorie] */
+const MATCH=[
+ {id:"m_zahl",t:3,title:"Zahl → Bedeutung (Reanimation)",bins:["Frequenz","Tiefe Erwachsene","Verhältnis Erwachsene","Atemkontrolle max."],
+  items:[["100–120 /min",0],["5–6 cm",1],["30:2",2],["10 s",3]],note:"Frequenz gilt für alle Altersgruppen. Kinder/Säuglinge: 1/3 Brustkorbtiefe, 5 Beatmungen + 15:2.",src:"GRC 2025"},
+ {id:"m_kind",t:6,title:"Erwachsene oder Kind?",bins:["Erwachsene","Kind / Säugling"],
+  items:[["Beginn mit 30 Kompressionen",0],["5 initiale Beatmungen",1],["15:2",1],["30:2",0],["Tiefe 5–6 cm",0],["Tiefe 1/3 Brustkorb",1]],note:"Merke: Kinder sterben meist an Atemproblemen → zuerst beatmen.",src:"GRC 2025"},
+ {id:"m_o2",t:1,title:"O₂-Mangel im Gehirn",bins:["~15 s","~3 min","~5 min"],
+  items:[["Bewusstlosigkeit",0],["Teilzerstörung",1],["Gehirntod",2]],note:"Erste Störungen schon nach Sekunden.",src:"Erste-Hilfe-Standard"},
+ {id:"m_aufg",t:1,title:"Aufgabe des Ersthelfers?",bins:["Aufgabe","KEINE Aufgabe"],
+  items:[["Notruf abgeben",0],["Vitalfunktionen überprüfen",0],["Bleiben, bis Hilfe eintrifft",0],["Diagnose stellen",1],["Den Tod feststellen",1],["Essen/Trinken geben",1],["Beruhigen",0]],note:"„Das einzig Falsche ist, nichts zu tun!“",src:"Erste-Hilfe-Standard"},
+ {id:"m_recht",t:1,title:"Gesetz → Inhalt",bins:["§ 95 StGB","§ 4 StVO","§ 26 ASchG","§ 14a GuKG"],
+  items:[["Unterlassene Hilfeleistung",0],["Verkehrsunfälle",1],["Erste Hilfe am Arbeitsplatz",2],["Kompetenzen bei Notfällen",3]],note:"§ 4 (3) GuKG = allgemeine Berufspflichten.",src:"Erste-Hilfe-Standard"},
+ {id:"m_sbar",t:1,title:"SBAR",bins:["S – Situation","B – Background","A – Assessment","R – Recommendation"],
+  items:[["Was ist jetzt das Problem?",0],["Vorgeschichte – warum ist Pat. hier?",1],["Was habe ich herausgefunden?",2],["Was brauche ich?",3]],note:"Innerklinische Übergabe / Notfallmeldung.",src:"Erste-Hilfe-Standard"},
+ {id:"m_atm",t:2,title:"Seitenlage oder CPR?",bins:["Stabile Seitenlage","Sofort CPR"],
+  items:[["Reagiert nicht, atmet normal",0],["Reagiert nicht, Schnappatmung",1],["Reagiert nicht, keine Atmung",1],["Wacht nach CPR auf, atmet",0]],note:"Schnappatmung = KEINE normale Atmung. Im Zweifel – drücken!",src:"GRC 2025"},
+ {id:"m_vital",t:4,title:"Normalwert Erwachsene",bins:["Atemfrequenz","SpO₂","Herzfrequenz","Rekapillarisierung"],
+  items:[["12–15 /min",0],["94–98 %",1],["60–100 /min",2],["< 2 s",3]],note:"Schock: RR systolisch < 90 mmHg.",src:"Erste-Hilfe-Standard"},
+ {id:"m_abcde",t:4,title:"ABCDE",bins:["A","B","C","D","E"],
+  items:[["Airway – Atemweg",0],["Breathing – Atmung",1],["Circulation – Kreislauf",2],["Disability – Neurologie",3],["Exposure – Entkleiden/Umgebung",4]],note:"Probleme sofort im jeweiligen Schritt behandeln, dann weiter.",src:"Erste-Hilfe-Standard"},
+ {id:"m_abs",t:1,title:"Unfallstelle absichern – Reihenfolge",bins:["1.","2.","3."],
+  items:[["Warnblinkanlage",0],["Warnschutzweste",1],["Warndreieck",2]],note:"Eigenschutz geht vor.",src:"Erste-Hilfe-Standard"},
+ {id:"m_retts",t:1,title:"Rettungsmittel",bins:["Notarztmittel","Rettungs-/Krankentransport"],
+  items:[["NEF",0],["RTH",0],["RTW",1],["KTW",1]],note:"NEF = Notarzteinsatzfahrzeug, RTH = Rettungshubschrauber.",src:"Erste-Hilfe-Standard"},
+ {id:"m_krampf",t:5,title:"Krampfanfall / Fieberkrampf",bins:["Normal","Status epilepticus / kompliziert"],
+  items:[["Krampf 3–4 min",0],["Krampf > 10 min",1],["Fieberkrampf > 10 min",1]],note:"Fieberkrampf: 6 Monate – 6 Jahre, 2–5 % der Kinder.",src:"Erste-Hilfe-Standard"},
+ {id:"m_med",t:5,title:"Zahl → Notfall",bins:["Herzinfarkt","Anaphylaxie","AED-Kindermodus"],
+  items:[["150–500 mg Aspirin kaubar",0],["Höchste Sterblichkeit in den ersten 2 h",0],["Adrenalin nach 5 min wiederholen",1],["< 25 kg",2]],note:"Aspirin nur ohne Kontraindikation.",src:"GRC 2025"},
+ {id:"m_kette",t:3,title:"Überlebenskette – Ziel",bins:["Rasch erkennen & Hilfe rufen","Frühe CPR & Defibrillation","Erweiterte & Postreanimation"],
+  items:[["Stillstand verhindern",0],["Gehirn schützen, Herz neu starten",1],["Lebensqualität sichern",2]],note:"Überlebensformel = Wissenschaft × Ausbildung × Umsetzung.",src:"GRC 2025"},
+ {id:"m_gefa",t:2,title:"Arterie oder Vene?",bins:["Arterien","Venen"],
+  items:[["O₂-reiches Blut",0],["Vom Herzen weg",0],["O₂-armes Blut",1],["Zum Herzen hin",1]],note:"Ausnahme Lungenkreislauf – hier nicht gefragt.",src:"Erste-Hilfe-Standard"}
+];
+
 
 /* ---------- app ---------- */
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
@@ -1321,6 +1364,11 @@ function home(){
     <div class="row"><button class="btn" id="s-all">Schritte ordnen</button><button class="btn ghost" id="s-open" ${seqN<SEQ.length?"":"disabled"}>Nur ungelöste (${SEQ.length-seqN})</button><button class="btn ghost" id="s-list">Checklisten</button></div>
   </section>
   <section class="panel">
+    <div class="qhead"><h2>Zuordnen</h2><span class="stats">${Object.keys(mtDone).length}/${MATCH.length} gelöst</span></div>
+    <p class="sub">Drag &amp; Drop: Begriffe in die richtige Kategorie ziehen (oder antippen, dann Kategorie antippen).</p>
+    <div class="row"><button class="btn" id="mt-all">Zuordnen starten</button><button class="btn ghost" id="mt-open" ${Object.keys(mtDone).length<MATCH.length?"":"disabled"}>Nur ungelöste</button></div>
+  </section>
+  <section class="panel">
     <div class="qhead"><h2>Konspekt</h2><span class="stats">12 Kapitel · DE + EN</span></div>
     <p class="sub">Der komplette Lernzettel: Zahlen, alle Themen, Checklisten, Merkhilfen, Fallen und Wörterbuch DE–EN.</p>
     <div class="row"><button class="btn" id="k-open">Konspekt öffnen</button><button class="btn ghost" id="k-fallen">Direkt zu den Fallen</button></div>
@@ -1348,6 +1396,8 @@ function home(){
   app.querySelector("#s-all").onclick=()=>seqStart(shuffle(SEQ));
   app.querySelector("#s-open").onclick=()=>seqStart(shuffle(SEQ.filter(s=>!seqDone[s.id])));
   app.querySelector("#s-list").onclick=checklists;
+  app.querySelector("#mt-all").onclick=()=>mtStart(shuffle(MATCH));
+  app.querySelector("#mt-open").onclick=()=>mtStart(shuffle(MATCH.filter(m=>!mtDone[m.id])));
   app.querySelector("#k-open").onclick=()=>konspekt();
   const rko=app.querySelector("#rk-open"); if(rko)rko.onclick=()=>ranking();
   app.querySelector("#k-fallen").onclick=()=>konspekt("k11");
@@ -1561,6 +1611,57 @@ function seqView(){
   if($("#skip"))$("#skip").onclick=()=>{SQ.i++;seqLoad()};
   if($("#retry"))$("#retry").onclick=()=>{seqLoad()};
   if($("#next"))$("#next").onclick=()=>{ if(last)home(); else {SQ.i++;seqLoad();} };
+}
+
+/* ---------- Zuordnen (Drag & Drop) ---------- */
+let mtDone=store.get("eh_mt",{});
+const MT={};
+function mtStart(list){ if(!list.length)return; hideSide(); MT.list=list; MT.i=0; MT.score=0; mtLoad(); }
+function mtLoad(){ const m=MT.list[MT.i]; MT.at=m.items.map(()=>-1); MT.order=shuffle(m.items.map((_,k)=>k)); MT.sel=null; MT.checked=false; MT.ok=false; mtView(); window.scrollTo(0,0); }
+function mtChip(m,k){ const b=MT.at[k], cls=MT.checked?(b===m.items[k][1]?"right":"wrong"):(MT.sel===k?"sel":"");
+  return `<button class="chipd ${cls}" data-k="${k}" ${MT.checked?"disabled":""}>${esc(m.items[k][0])}${MT.checked&&b!==m.items[k][1]?`<span class="fix">→ ${esc(m.bins[m.items[k][1]])}</span>`:""}</button>`; }
+function mtMove(k,b){ MT.at[k]=b; MT.sel=null; mtView(); }
+function mtView(){
+  const m=MT.list[MT.i], n=MT.list.length, last=MT.i===n-1, free=MT.order.filter(k=>MT.at[k]<0);
+  app.innerHTML=`
+  <div class="row" style="justify-content:space-between"><button class="btn ghost sm" id="back">← Übersicht</button><span class="stats">Aufgabe ${MT.i+1} / ${n} · ${MT.score} richtig</span></div>
+  <div class="bar"><i style="width:${(MT.i+(MT.checked?1:0))/n*100}%"></i></div>
+  <section class="panel">
+    <div class="qhead"><span class="type">Zuordnen</span><span class="label">${esc(TOPICS[m.t])}</span></div>
+    <h3>${esc(m.title)}</h3>
+    ${MT.checked?"":`<span class="label">Begriffe · ziehen oder antippen</span><div class="mt-pool" data-b="-1">${free.map(k=>mtChip(m,k)).join("")||`<span class="stats">Alles verteilt – jetzt prüfen.</span>`}</div>`}
+    <div class="mt-bins">${m.bins.map((h,b)=>`<div class="mt-bin" data-b="${b}"><h4>${esc(h)}</h4><div class="drop">${MT.order.filter(k=>MT.at[k]===b).map(k=>mtChip(m,k)).join("")}</div></div>`).join("")}</div>
+    <div id="fb">${MT.checked?`<div class="verdict ${MT.ok?"ok":"bad"}"><strong>${MT.ok?"Richtig":"Nicht ganz"}</strong><span>${MT.at.filter((b,k)=>b===m.items[k][1]).length} / ${m.items.length} richtig zugeordnet</span></div><div class="note">${esc(m.note)}<br><span class="stats">Quelle: ${esc(m.src)}</span></div>`:""}</div>
+    <div class="row">${MT.checked?`<button class="btn" id="next">${last?"Fertig":"Nächste Aufgabe →"}</button>${MT.ok?"":`<button class="btn ghost" id="retry">Nochmal</button>`}`:`<button class="btn" id="chk" ${free.length?"disabled":""}>Prüfen</button><button class="btn ghost" id="reset">Zurücksetzen</button><button class="btn ghost" id="skip" ${last?"disabled":""}>Überspringen</button>`}</div>
+  </section>`;
+  const $=x=>app.querySelector(x);
+  $("#back").onclick=home;
+  if(!MT.checked){
+    app.querySelectorAll(".chipd").forEach(c=>mtDrag(c));
+    app.querySelectorAll(".mt-bin,.mt-pool").forEach(z=>z.addEventListener("click",e=>{ if(MT.sel!==null&&!e.target.closest(".chipd"))mtMove(MT.sel,+z.dataset.b); }));
+    $("#chk").onclick=()=>{MT.checked=true;MT.ok=MT.at.every((b,k)=>b===m.items[k][1]);
+      if(MT.ok){MT.score++;mtDone[m.id]=1;store.set("eh_mt",mtDone);} mtView();};
+    $("#reset").onclick=()=>mtLoad();
+    $("#skip").onclick=()=>{MT.i++;mtLoad()};
+  } else {
+    if($("#retry"))$("#retry").onclick=()=>mtLoad();
+    $("#next").onclick=()=>{ if(last)home(); else {MT.i++;mtLoad();} };
+  }
+}
+function mtDrag(c){
+  const k=+c.dataset.k; let sx,sy,g=null,over=null;
+  c.addEventListener("pointerdown",e=>{ if(e.button>0)return; sx=e.clientX;sy=e.clientY; c.setPointerCapture(e.pointerId);
+    const mv=ev=>{ if(!g&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<6)return;
+      if(!g){g=c.cloneNode(true);g.classList.add("ghost");g.style.width=c.offsetWidth+"px";document.body.appendChild(g);c.style.opacity=".3";}
+      g.style.left=(ev.clientX-g.offsetWidth/2)+"px";g.style.top=(ev.clientY-g.offsetHeight/2)+"px";
+      const z=document.elementFromPoint(ev.clientX,ev.clientY);const zone=z&&z.closest(".mt-bin,.mt-pool");
+      if(zone!==over){over&&over.classList.remove("over");over=zone;over&&over.classList.add("over");}
+      ev.preventDefault(); };
+    const up=()=>{ c.removeEventListener("pointermove",mv);c.removeEventListener("pointerup",up);c.removeEventListener("pointercancel",up);
+      if(g){g.remove();g=null; if(over)mtMove(k,+over.dataset.b); else {c.style.opacity="";} }
+      else { if(MT.at[k]>=0&&MT.sel===null) mtMove(k,-1); else {MT.sel=MT.sel===k?null:k; mtView();} } };
+    c.addEventListener("pointermove",mv);c.addEventListener("pointerup",up);c.addEventListener("pointercancel",up);
+  });
 }
 function checklists(){
   hideSide();
